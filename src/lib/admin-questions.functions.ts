@@ -3,11 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { CONTENT_AREAS, type ContentAreaKey } from "@/lib/exam";
 
-async function ensureAdmin(supabase: ReturnType<typeof requireSupabaseAuth>["__supabaseType"] extends never ? never : never, userId: string) {
-  // helper used inline below; keeping logic explicit per call site for typing simplicity
-  void supabase; void userId;
-}
-
 const areaEnum = z.enum(["human_development","assessment_diagnosis","psychotherapy_interventions","ethics_values"]);
 
 const questionInput = z.object({
@@ -23,7 +18,7 @@ const questionInput = z.object({
   status: z.enum(["draft", "published"]).default("draft"),
 });
 
-async function requireAdmin(context: { supabase: ReturnType<typeof Object> & { rpc: (n: string, p: object) => Promise<{ data: boolean | null; error: unknown }> }; userId: string }) {
+async function requireAdmin(context: { supabase: { rpc: (fn: "has_role", args: { _user_id: string; _role: "admin" | "student" }) => Promise<{ data: boolean | null; error: unknown }> }; userId: string }) {
   const { data, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
   if (error) throw error;
   if (!data) throw new Error("Admin access required.");
@@ -150,6 +145,3 @@ export const draftQuestionWithAI = createServerFn({ method: "POST" })
     if (inserted.error) throw inserted.error;
     return inserted.data;
   });
-
-// avoid unused import warnings if not referenced; tree-shake friendly
-void ensureAdmin;

@@ -17,7 +17,7 @@ import { Pencil, Plus, Sparkles, Trash2, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/_app/admin/questions")({
   head: () => ({ meta: [{ title: "Question bank · Admin" }] }),
-  component: QuestionsAdmin;
+  component: QuestionsAdmin,
 });
 
 type Row = Awaited<ReturnType<typeof listQuestions>>[number];

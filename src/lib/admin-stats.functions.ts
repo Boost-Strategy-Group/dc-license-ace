@@ -2,9 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { CONTENT_AREAS } from "@/lib/exam";
 
-async function requireAdmin(context: { supabase: { rpc: (...args: unknown[]) => unknown }; userId: string }) {
-  const rpc = context.supabase.rpc as unknown as (n: string, a: object) => Promise<{ data: boolean | null; error: unknown }>;
-  const { data, error } = await rpc("has_role", { _user_id: context.userId, _role: "admin" });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function requireAdmin(context: any) {
+  const { data, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
   if (error) throw error;
   if (!data) throw new Error("Admin access required.");
 }

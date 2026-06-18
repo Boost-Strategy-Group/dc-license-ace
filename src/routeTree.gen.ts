@@ -16,7 +16,11 @@ import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
+import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
+import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
+import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -52,28 +56,56 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSessionIdRoute = AppSessionIdRouteImport.update({
   id: '/session/$id',
   path: '/session/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminStudentsRoute = AppAdminStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminQuestionsRoute = AppAdminQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AppAdminRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/questions': typeof AppAdminQuestionsRoute
+  '/admin/students': typeof AppAdminStudentsRoute
   '/session/$id': typeof AppSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AppAdminRouteWithChildren
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/questions': typeof AppAdminQuestionsRoute
+  '/admin/students': typeof AppAdminStudentsRoute
   '/session/$id': typeof AppSessionIdRoute
 }
 export interface FileRoutesById {
@@ -81,10 +113,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
+  '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/_app/admin/questions': typeof AppAdminQuestionsRoute
+  '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/session/$id': typeof AppSessionIdRoute
 }
 export interface FileRouteTypes {
@@ -92,29 +128,41 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
     | '/dashboard'
     | '/mock'
     | '/practice'
     | '/review'
+    | '/admin/analytics'
+    | '/admin/questions'
+    | '/admin/students'
     | '/session/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/admin'
     | '/dashboard'
     | '/mock'
     | '/practice'
     | '/review'
+    | '/admin/analytics'
+    | '/admin/questions'
+    | '/admin/students'
     | '/session/$id'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/auth'
+    | '/_app/admin'
     | '/_app/dashboard'
     | '/_app/mock'
     | '/_app/practice'
     | '/_app/review'
+    | '/_app/admin/analytics'
+    | '/_app/admin/questions'
+    | '/_app/admin/students'
     | '/_app/session/$id'
   fileRoutesById: FileRoutesById
 }
@@ -175,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/session/$id': {
       id: '/_app/session/$id'
       path: '/session/$id'
@@ -182,10 +237,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSessionIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/students': {
+      id: '/_app/admin/students'
+      path: '/students'
+      fullPath: '/admin/students'
+      preLoaderRoute: typeof AppAdminStudentsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/questions': {
+      id: '/_app/admin/questions'
+      path: '/questions'
+      fullPath: '/admin/questions'
+      preLoaderRoute: typeof AppAdminQuestionsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/analytics': {
+      id: '/_app/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AppAdminAnalyticsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
   }
 }
 
+interface AppAdminRouteChildren {
+  AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+  AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
+  AppAdminStudentsRoute: typeof AppAdminStudentsRoute
+}
+
+const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+  AppAdminQuestionsRoute: AppAdminQuestionsRoute,
+  AppAdminStudentsRoute: AppAdminStudentsRoute,
+}
+
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
+  AppAdminRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRouteWithChildren
   AppDashboardRoute: typeof AppDashboardRoute
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
@@ -194,6 +287,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRouteWithChildren,
   AppDashboardRoute: AppDashboardRoute,
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,

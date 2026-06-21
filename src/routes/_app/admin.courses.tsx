@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, BookOpen } from "lucide-react";
+import { Plus, BookOpen, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_app/admin/courses")({
   head: () => ({ meta: [{ title: "Courses · Boost Admin" }] }),

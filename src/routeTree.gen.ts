@@ -12,15 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
+import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
+import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -34,6 +37,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CSlugRoute = CSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppReviewRoute = AppReviewRouteImport.update({
@@ -66,6 +74,11 @@ const AppSessionIdRoute = AppSessionIdRouteImport.update({
   path: '/session/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminTenantsRoute = AppAdminTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminStudentsRoute = AppAdminStudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -81,6 +94,11 @@ const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
+  id: '/$tenantId',
+  path: '/$tenantId',
+  getParentRoute: () => AppAdminTenantsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,10 +108,13 @@ export interface FileRoutesByFullPath {
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
+  '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/session/$id': typeof AppSessionIdRoute
+  '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,10 +124,13 @@ export interface FileRoutesByTo {
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
+  '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/session/$id': typeof AppSessionIdRoute
+  '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,10 +142,13 @@ export interface FileRoutesById {
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
+  '/c/$slug': typeof CSlugRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
+  '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/_app/session/$id': typeof AppSessionIdRoute
+  '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,10 +160,13 @@ export interface FileRouteTypes {
     | '/mock'
     | '/practice'
     | '/review'
+    | '/c/$slug'
     | '/admin/analytics'
     | '/admin/questions'
     | '/admin/students'
+    | '/admin/tenants'
     | '/session/$id'
+    | '/admin/tenants/$tenantId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,10 +176,13 @@ export interface FileRouteTypes {
     | '/mock'
     | '/practice'
     | '/review'
+    | '/c/$slug'
     | '/admin/analytics'
     | '/admin/questions'
     | '/admin/students'
+    | '/admin/tenants'
     | '/session/$id'
+    | '/admin/tenants/$tenantId'
   id:
     | '__root__'
     | '/'
@@ -160,16 +193,20 @@ export interface FileRouteTypes {
     | '/_app/mock'
     | '/_app/practice'
     | '/_app/review'
+    | '/c/$slug'
     | '/_app/admin/analytics'
     | '/_app/admin/questions'
     | '/_app/admin/students'
+    | '/_app/admin/tenants'
     | '/_app/session/$id'
+    | '/_app/admin/tenants/$tenantId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CSlugRoute: typeof CSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -193,6 +230,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$slug': {
+      id: '/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/c/$slug'
+      preLoaderRoute: typeof CSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/review': {
@@ -237,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSessionIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/tenants': {
+      id: '/_app/admin/tenants'
+      path: '/tenants'
+      fullPath: '/admin/tenants'
+      preLoaderRoute: typeof AppAdminTenantsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/students': {
       id: '/_app/admin/students'
       path: '/students'
@@ -258,19 +309,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAnalyticsRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/tenants/$tenantId': {
+      id: '/_app/admin/tenants/$tenantId'
+      path: '/$tenantId'
+      fullPath: '/admin/tenants/$tenantId'
+      preLoaderRoute: typeof AppAdminTenantsTenantIdRouteImport
+      parentRoute: typeof AppAdminTenantsRoute
+    }
   }
 }
+
+interface AppAdminTenantsRouteChildren {
+  AppAdminTenantsTenantIdRoute: typeof AppAdminTenantsTenantIdRoute
+}
+
+const AppAdminTenantsRouteChildren: AppAdminTenantsRouteChildren = {
+  AppAdminTenantsTenantIdRoute: AppAdminTenantsTenantIdRoute,
+}
+
+const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
+  AppAdminTenantsRouteChildren,
+)
 
 interface AppAdminRouteChildren {
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
   AppAdminStudentsRoute: typeof AppAdminStudentsRoute
+  AppAdminTenantsRoute: typeof AppAdminTenantsRouteWithChildren
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,
   AppAdminStudentsRoute: AppAdminStudentsRoute,
+  AppAdminTenantsRoute: AppAdminTenantsRouteWithChildren,
 }
 
 const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
@@ -301,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  CSlugRoute: CSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

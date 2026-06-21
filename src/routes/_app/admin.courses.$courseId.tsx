@@ -22,6 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Trash2, FileText, Video, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
 import { ObjectivesPanel, AssessmentsPanel, SurveysPanel, ReadinessPanel } from "@/components/course-builder-panels";
+import { ActivitiesPanel, WorkProductsPanel } from "@/components/activities-builder-panels";
 
 export const Route = createFileRoute("/_app/admin/courses/$courseId")({
   head: () => ({ meta: [{ title: "Course Builder · Boost" }] }),
@@ -115,6 +116,8 @@ function BuilderPage() {
           <ObjectivesPanel courseId={courseId} />
           <AssessmentsPanel courseId={courseId} />
           <SurveysPanel courseId={courseId} />
+          <WorkProductsPanel courseId={courseId} />
+          <ActivitiesPanel courseId={courseId} />
         </div>
         <aside className="space-y-6">
           <ReadinessPanel courseId={courseId} />

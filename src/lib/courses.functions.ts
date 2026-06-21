@@ -311,7 +311,44 @@ export const markLessonComplete = createServerFn({ method: "POST" })
       { onConflict: "enrollment_id,lesson_id" },
     );
     if (error) throw new Error(error.message);
-    return { ok: true };
+
+    // If every lesson in the course is now complete, finalize the enrollment
+    // and (when configured) issue a Certifier credential.
+    const { data: enr } = await context.supabase
+      .from("enrollments")
+      .select("id, course_id, completed_at")
+      .eq("id", data.enrollmentId)
+      .maybeSingle();
+    if (enr && !enr.completed_at) {
+      const { data: mods } = await context.supabase
+        .from("modules")
+        .select("id, lessons:lessons(id)")
+        .eq("course_id", enr.course_id);
+      const allLessonIds = (mods ?? []).flatMap((m) => ((m.lessons as { id: string }[] | null) ?? []).map((l) => l.id));
+      if (allLessonIds.length > 0) {
+        const { data: done } = await context.supabase
+          .from("progress")
+          .select("lesson_id, status")
+          .eq("enrollment_id", enr.id)
+          .eq("status", "complete");
+        const doneSet = new Set((done ?? []).map((d) => d.lesson_id));
+        const allDone = allLessonIds.every((id) => doneSet.has(id));
+        if (allDone) {
+          await context.supabase
+            .from("enrollments")
+            .update({ status: "completed", completed_at: new Date().toISOString() })
+            .eq("id", enr.id);
+          try {
+            const { issueCertifierForEnrollment } = await import("./integrations.functions");
+            await issueCertifierForEnrollment(context.supabase as never, enr.id);
+          } catch (e) {
+            console.warn("Certifier issuance skipped:", (e as Error).message);
+          }
+          return { ok: true, completed: true };
+        }
+      }
+    }
+    return { ok: true, completed: false };
   });
 
 // ---------- Vault ----------

@@ -29,6 +29,7 @@ import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.in
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
 import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
@@ -133,6 +134,12 @@ const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
   path: '/ai-factory',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
   id: '/$tenantId',
   path: '/$tenantId',
@@ -178,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -203,6 +211,7 @@ export interface FileRoutesByTo {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -230,6 +239,7 @@ export interface FileRoutesById {
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/api/public/payments/webhook'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/api/public/payments/webhook'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
@@ -308,6 +320,7 @@ export interface FileRouteTypes {
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
+    | '/api/public/payments/webhook'
     | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
@@ -317,6 +330,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   CSlugRoute: typeof CSlugRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -461,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAiFactoryRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/admin/tenants/$tenantId': {
       id: '/_app/admin/tenants/$tenantId'
       path: '/$tenantId'
@@ -589,6 +610,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   CSlugRoute: CSlugRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

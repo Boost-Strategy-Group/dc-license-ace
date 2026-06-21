@@ -215,8 +215,11 @@ function NewLessonButton({ moduleId, courseId, order }: { moduleId: string; cour
     kind: "text" as (typeof LESSON_KINDS)[number]["value"],
     body: "",
     url: "",
+    assessment_id: "",
     duration_minutes: 5,
   });
+  const isQuiz = form.kind === "quiz" || form.kind === "exam";
+  const isText = form.kind === "text";
   const mut = useMutation({
     mutationFn: () =>
       fn({
@@ -226,13 +229,17 @@ function NewLessonButton({ moduleId, courseId, order }: { moduleId: string; cour
           kind: form.kind,
           duration_minutes: form.duration_minutes,
           sort_order: order,
-          content: form.kind === "text" ? { body: form.body } : { url: form.url },
+          content: isQuiz
+            ? { assessment_id: form.assessment_id }
+            : isText
+              ? { body: form.body }
+              : { url: form.url },
         },
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["lessons", courseId] });
       setOpen(false);
-      setForm({ title: "", kind: "text", body: "", url: "", duration_minutes: 5 });
+      setForm({ title: "", kind: "text", body: "", url: "", assessment_id: "", duration_minutes: 5 });
       toast.success("Lesson added");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -250,7 +257,9 @@ function NewLessonButton({ moduleId, courseId, order }: { moduleId: string; cour
               {LESSON_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
             </select>
           </div>
-          {form.kind === "text" ? (
+          {isQuiz ? (
+            <div><Label>Assessment ID</Label><Input value={form.assessment_id} onChange={(e) => setForm({ ...form, assessment_id: e.target.value })} placeholder="UUID from Assessments panel" /></div>
+          ) : isText ? (
             <div><Label>Body (markdown ok)</Label><Textarea rows={6} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></div>
           ) : (
             <div><Label>URL or reference</Label><Input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder={form.kind === "video" ? "https://… mp4 / youtube" : "https://…"} /></div>

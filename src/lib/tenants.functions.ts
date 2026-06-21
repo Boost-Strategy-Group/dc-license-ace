@@ -50,7 +50,22 @@ export const listMyMemberships = createServerFn({ method: "GET" })
     return (data ?? []).map((r: any) => ({ role: r.role as string, tenant: r.tenant as TenantRow }));
   });
 
-// AUTHED: list all tenants (super_admin or member)
+// PUBLIC: list tenants for the landing page (uses publishable client; tenants has anon SELECT policy)
+export const listPublicTenants = createServerFn({ method: "GET" }).handler(async () => {
+  const supabasePublic = createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+  );
+  const { data, error } = await supabasePublic
+    .from("tenants")
+    .select(tenantCols)
+    .order("name");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as TenantRow[];
+});
+
+// AUTHED: list all tenants (super_admin or member — RLS-scoped)
 export const listTenants = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

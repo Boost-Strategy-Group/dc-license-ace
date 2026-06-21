@@ -27,8 +27,10 @@ import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.studen
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
+import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
+import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
 import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
 
 const AuthRoute = AuthRouteImport.update({
@@ -120,6 +122,11 @@ const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
+  id: '/ai-factory',
+  path: '/ai-factory',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
   id: '/$tenantId',
   path: '/$tenantId',
@@ -130,6 +137,12 @@ const AppAdminCoursesCourseIdRoute = AppAdminCoursesCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppAdminCoursesRoute,
 } as any)
+const AppAdminCoursesCourseIdNeedsAssessmentRoute =
+  AppAdminCoursesCourseIdNeedsAssessmentRouteImport.update({
+    id: '/needs-assessment',
+    path: '/needs-assessment',
+    getParentRoute: () => AppAdminCoursesCourseIdRoute,
+  } as any)
 const AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute =
   AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport.update({
     id: '/assessments/$assessmentId',
@@ -148,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
@@ -157,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesByTo {
@@ -170,6 +185,7 @@ export interface FileRoutesByTo {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
@@ -179,6 +195,7 @@ export interface FileRoutesByTo {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesById {
@@ -194,6 +211,7 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
@@ -203,6 +221,7 @@ export interface FileRoutesById {
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRouteTypes {
@@ -218,6 +237,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
     | '/admin/questions'
@@ -227,6 +247,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -240,6 +261,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
     | '/admin/questions'
@@ -249,6 +271,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
     | '__root__'
@@ -263,6 +286,7 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/_app/vault'
     | '/c/$slug'
+    | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
     | '/_app/admin/questions'
@@ -272,6 +296,7 @@ export interface FileRouteTypes {
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
+    | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
 }
@@ -410,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAnalyticsRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/ai-factory': {
+      id: '/_app/admin/ai-factory'
+      path: '/ai-factory'
+      fullPath: '/admin/ai-factory'
+      preLoaderRoute: typeof AppAdminAiFactoryRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/tenants/$tenantId': {
       id: '/_app/admin/tenants/$tenantId'
       path: '/$tenantId'
@@ -424,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminCoursesCourseIdRouteImport
       parentRoute: typeof AppAdminCoursesRoute
     }
+    '/_app/admin/courses/$courseId/needs-assessment': {
+      id: '/_app/admin/courses/$courseId/needs-assessment'
+      path: '/needs-assessment'
+      fullPath: '/admin/courses/$courseId/needs-assessment'
+      preLoaderRoute: typeof AppAdminCoursesCourseIdNeedsAssessmentRouteImport
+      parentRoute: typeof AppAdminCoursesCourseIdRoute
+    }
     '/_app/admin/courses/$courseId/assessments/$assessmentId': {
       id: '/_app/admin/courses/$courseId/assessments/$assessmentId'
       path: '/assessments/$assessmentId'
@@ -435,11 +474,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppAdminCoursesCourseIdRouteChildren {
+  AppAdminCoursesCourseIdNeedsAssessmentRoute: typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute: typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 
 const AppAdminCoursesCourseIdRouteChildren: AppAdminCoursesCourseIdRouteChildren =
   {
+    AppAdminCoursesCourseIdNeedsAssessmentRoute:
+      AppAdminCoursesCourseIdNeedsAssessmentRoute,
     AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute:
       AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute,
   }
@@ -474,6 +516,7 @@ const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
 )
 
 interface AppAdminRouteChildren {
+  AppAdminAiFactoryRoute: typeof AppAdminAiFactoryRoute
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
   AppAdminCoursesRoute: typeof AppAdminCoursesRouteWithChildren
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
@@ -482,6 +525,7 @@ interface AppAdminRouteChildren {
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAiFactoryRoute: AppAdminAiFactoryRoute,
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
   AppAdminCoursesRoute: AppAdminCoursesRouteWithChildren,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,

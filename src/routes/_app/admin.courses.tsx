@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, BookOpen } from "lucide-react";
+import { Plus, BookOpen, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_app/admin/courses")({
   head: () => ({ meta: [{ title: "Courses · Boost Admin" }] }),
@@ -30,7 +30,12 @@ function CoursesPage() {
           <h1 className="font-display text-3xl font-semibold">Courses</h1>
           <p className="text-sm text-muted-foreground">Build, sequence, and publish courses for any tenant.</p>
         </div>
-        <NewCourseDialog />
+        <div className="flex gap-2">
+          <Link to="/admin/ai-factory">
+            <Button variant="outline" className="gap-2"><Sparkles className="h-4 w-4" /> AI Course Factory</Button>
+          </Link>
+          <NewCourseDialog />
+        </div>
       </div>
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}

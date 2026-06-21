@@ -18,18 +18,22 @@ function CatalogPage() {
   const listFn = useServerFn(listPublishedCourses);
   const enrollFn = useServerFn(enrollInCourse);
   const myFn = useServerFn(listMyEnrollments);
+  const checkoutFn = useServerFn(createCheckoutSession);
   const qc = useQueryClient();
 
   const { data: courses, isLoading } = useQuery({ queryKey: ["catalog"], queryFn: () => listFn() });
   const { data: mine } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => myFn() });
   const enrolledIds = new Set((mine ?? []).map((e: any) => e.course_id));
 
-  const mut = useMutation({
+  const enrollMut = useMutation({
     mutationFn: (courseId: string) => enrollFn({ data: { courseId } }),
-    onSuccess: () => {
-      toast.success("Enrolled");
-      qc.invalidateQueries({ queryKey: ["my-enrollments"] });
-    },
+    onSuccess: () => { toast.success("Enrolled"); qc.invalidateQueries({ queryKey: ["my-enrollments"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const payMut = useMutation({
+    mutationFn: (courseId: string) =>
+      checkoutFn({ data: { courseId, returnUrl: window.location.origin + "/catalog" } }),
+    onSuccess: (r) => { if (r.url) window.location.href = r.url; },
     onError: (e: Error) => toast.error(e.message),
   });
 

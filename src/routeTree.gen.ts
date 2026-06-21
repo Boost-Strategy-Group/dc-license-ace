@@ -20,6 +20,7 @@ import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
+import { Route as AppLearnCourseIdRouteImport } from './routes/_app/learn.$courseId'
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
@@ -82,6 +83,11 @@ const AppSessionIdRoute = AppSessionIdRouteImport.update({
   path: '/session/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLearnCourseIdRoute = AppLearnCourseIdRouteImport.update({
+  id: '/learn/$courseId',
+  path: '/learn/$courseId',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminTenantsRoute = AppAdminTenantsRouteImport.update({
   id: '/tenants',
   path: '/tenants',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/_app/learn/$courseId': typeof AppLearnCourseIdRoute
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
+    | '/learn/$courseId'
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
+    | '/learn/$courseId'
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/_app/admin/questions'
     | '/_app/admin/students'
     | '/_app/admin/tenants'
+    | '/_app/learn/$courseId'
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
@@ -322,6 +334,13 @@ declare module '@tanstack/react-router' {
       path: '/session/$id'
       fullPath: '/session/$id'
       preLoaderRoute: typeof AppSessionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/learn/$courseId': {
+      id: '/_app/learn/$courseId'
+      path: '/learn/$courseId'
+      fullPath: '/learn/$courseId'
+      preLoaderRoute: typeof AppLearnCourseIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/admin/tenants': {
@@ -427,6 +446,7 @@ interface AppRouteChildren {
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
   AppReviewRoute: typeof AppReviewRoute
+  AppLearnCourseIdRoute: typeof AppLearnCourseIdRoute
   AppSessionIdRoute: typeof AppSessionIdRoute
 }
 
@@ -437,6 +457,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,
   AppReviewRoute: AppReviewRoute,
+  AppLearnCourseIdRoute: AppLearnCourseIdRoute,
   AppSessionIdRoute: AppSessionIdRoute,
 }
 

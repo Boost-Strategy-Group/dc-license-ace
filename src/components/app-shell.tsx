@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, LogOut, Repeat2, Timer, Users } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Repeat2, Timer, Users, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,8 +11,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { data: superAdminCheck } = useIsSuperAdmin();
   const isSuper = !!superAdminCheck?.isSuperAdmin;
   const loc = useLocation();
-  const studentNav = [
+  const learnNav = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { to: "/catalog", label: "Catalog", icon: Library },
+    { to: "/vault", label: "Student vault", icon: Wallet },
+  ];
+  const studyNav = [
     { to: "/practice", label: "Practice", icon: BookOpen },
     { to: "/mock", label: "Mock exam", icon: Timer },
     { to: "/review", label: "Review queue", icon: Repeat2 },
@@ -24,6 +28,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   ];
   const platformNav = [
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },
+    { to: "/admin/courses", label: "Courses", icon: BookOpen },
   ];
   return (
     <div className="flex min-h-screen bg-background">

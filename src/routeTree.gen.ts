@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
@@ -47,6 +48,11 @@ const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppVaultRoute = AppVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppReviewRoute = AppReviewRouteImport.update({
   id: '/review',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
+  '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/mock'
     | '/practice'
     | '/review'
+    | '/vault'
     | '/c/$slug'
     | '/admin/analytics'
     | '/admin/courses'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/mock'
     | '/practice'
     | '/review'
+    | '/vault'
     | '/c/$slug'
     | '/admin/analytics'
     | '/admin/courses'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/_app/mock'
     | '/_app/practice'
     | '/_app/review'
+    | '/_app/vault'
     | '/c/$slug'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
@@ -286,6 +298,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/c/$slug'
       preLoaderRoute: typeof CSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/vault': {
+      id: '/_app/vault'
+      path: '/vault'
+      fullPath: '/vault'
+      preLoaderRoute: typeof AppVaultRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/review': {
       id: '/_app/review'
@@ -446,6 +465,7 @@ interface AppRouteChildren {
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
   AppReviewRoute: typeof AppReviewRoute
+  AppVaultRoute: typeof AppVaultRoute
   AppLearnCourseIdRoute: typeof AppLearnCourseIdRoute
   AppSessionIdRoute: typeof AppSessionIdRoute
 }
@@ -457,6 +477,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,
   AppReviewRoute: AppReviewRoute,
+  AppVaultRoute: AppVaultRoute,
   AppLearnCourseIdRoute: AppLearnCourseIdRoute,
   AppSessionIdRoute: AppSessionIdRoute,
 }

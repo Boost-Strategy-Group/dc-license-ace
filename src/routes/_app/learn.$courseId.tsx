@@ -135,7 +135,7 @@ function PlayerPage() {
   );
 }
 
-function LessonViewer({ lesson }: { lesson: any }) {
+function LessonViewer({ lesson, enrollmentId }: { lesson: any; enrollmentId: string }) {
   const c = lesson.content ?? {};
   if (lesson.kind === "text") {
     return <div className="prose prose-sm max-w-none whitespace-pre-wrap text-sm">{c.body ?? "No content."}</div>;
@@ -161,7 +161,8 @@ function LessonViewer({ lesson }: { lesson: any }) {
     return <div className="rounded-md border bg-muted/40 p-4 text-sm">TalentLMS embed — SSO wrapper added in Phase D.</div>;
   }
   if (lesson.kind === "quiz" || lesson.kind === "exam") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">Assessment authoring & grading lands in Phase B.2 (next iteration).</div>;
+    if (!c.assessment_id) return <div className="rounded-md border bg-muted/40 p-4 text-sm">No assessment attached. Open the builder and set <code>content.assessment_id</code> on this lesson.</div>;
+    return <QuizRunner assessmentId={c.assessment_id} enrollmentId={enrollmentId} lessonId={lesson.id} />;
   }
   if (lesson.kind === "activity") {
     return <div className="rounded-md border bg-muted/40 p-4 text-sm">Activity prompts feed the AI Work Product Engine — Phase C.</div>;

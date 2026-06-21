@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listPublishedCourses, listMyEnrollments, enrollInCourse } from "@/lib/courses.functions";
+import { createCheckoutSession } from "@/lib/integrations.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { GraduationCap, Play } from "lucide-react";
+import { GraduationCap, Play, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/_app/catalog")({
   head: () => ({ meta: [{ title: "Catalog · Boost" }] }),

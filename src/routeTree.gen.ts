@@ -30,6 +30,7 @@ import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.in
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
@@ -140,6 +141,12 @@ const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
   path: '/ai-factory',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -193,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -220,6 +228,7 @@ export interface FileRoutesByTo {
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -249,6 +258,7 @@ export interface FileRoutesById {
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
@@ -333,6 +345,7 @@ export interface FileRouteTypes {
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
     | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
@@ -344,6 +357,7 @@ export interface RootRouteChildren {
   CSlugRoute: typeof CSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -495,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAiFactoryRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -632,6 +653,7 @@ const rootRouteChildren: RootRouteChildren = {
   CSlugRoute: CSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

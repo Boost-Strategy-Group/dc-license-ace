@@ -4,7 +4,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const MODEL = "google/gemini-2.5-flash";
 
-async function aiJson(prompt: string, system: string): Promise<unknown> {
+// Loose Json helper to satisfy strict Database Insert types without losing intent.
+type Json = never;
+const J = (v: unknown) => v as Json;
+
+async function aiJson(prompt: string, system: string): Promise<Record<string, unknown>> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("Missing LOVABLE_API_KEY");
   const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
@@ -17,11 +21,11 @@ async function aiJson(prompt: string, system: string): Promise<unknown> {
   });
   const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
   try {
-    return JSON.parse(cleaned);
+    return JSON.parse(cleaned) as Record<string, unknown>;
   } catch {
     const start = cleaned.indexOf("{");
     const end = cleaned.lastIndexOf("}");
-    if (start >= 0 && end > start) return JSON.parse(cleaned.slice(start, end + 1));
+    if (start >= 0 && end > start) return JSON.parse(cleaned.slice(start, end + 1)) as Record<string, unknown>;
     throw new Error("AI returned invalid JSON");
   }
 }
@@ -61,7 +65,7 @@ Return JSON with this shape:
   "delivery_recommendations": "string",
   "citations": [ { "source": "string", "year": number, "topic": "string" } ]
 }`;
-    const output = (await aiJson(prompt, system)) as Record<string, unknown>;
+    const output = await aiJson(prompt, system);
 
     const { data: existing } = await context.supabase
       .from("course_needs_assessments")
@@ -77,9 +81,9 @@ Return JSON with this shape:
       .insert({
         course_id: data.courseId,
         version: nextVersion,
-        inputs: data,
-        output,
-        citations: (output.citations as unknown[]) ?? [],
+        inputs: J(data),
+        output: J(output),
+        citations: J((output.citations as unknown[]) ?? []),
         generated_by: context.userId,
       })
       .select("*")
@@ -91,8 +95,8 @@ Return JSON with this shape:
       course_id: data.courseId,
       user_id: context.userId,
       model: MODEL,
-      input: data,
-      output,
+      input: J(data),
+      output: J(output),
     });
     return row;
   });
@@ -131,7 +135,6 @@ export const generateCourseFromAi = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => FactoryInput.parse(i))
   .handler(async ({ data, context }) => {
-    // Permission: super admin OR tenant admin/owner
     const { data: isSuper } = await context.supabase.rpc("is_super_admin", { _user_id: context.userId });
     if (!isSuper) {
       const { data: isTenantAdmin } = await context.supabase.rpc("has_tenant_role", {
@@ -157,8 +160,8 @@ Desired learner outcomes: ${data.outcomes}
 Return JSON:
 {
   "description": "1-paragraph course description",
-  "ceu_value": number,  // typically contact_hours / 10
-  "learning_objectives": [ { "text": "Learners will be able to...", "bloom_level": "remember|understand|apply|analyze|evaluate|create" } ],  // at least 4
+  "ceu_value": number,
+  "learning_objectives": [ { "text": "Learners will be able to...", "bloom_verb": "Apply|Analyze|Evaluate|Create|Understand|Remember" } ],
   "modules": [
     {
       "title": "string",
@@ -170,26 +173,25 @@ Return JSON:
   ],
   "final_quiz": {
     "title": "Final exam",
-    "passing_score": 80,
+    "pass_threshold": 80,
     "items": [
-      { "stem": "string", "kind": "mcq", "options": ["a","b","c","d"], "answer_index": 0, "rationale": "string" }
-    ]  // 5-10 items
+      { "stem": "string", "options": ["a","b","c","d"], "answer_index": 0, "rationale": "string" }
+    ]
   },
-  "pre_survey_prompt": "string asking learners about prior confidence",
-  "post_survey_prompt": "string asking learners to evaluate the course"
+  "pre_survey_prompt": "string",
+  "post_survey_prompt": "string"
 }`;
 
-    const plan = (await aiJson(prompt, system)) as {
+    const plan = (await aiJson(prompt, system)) as unknown as {
       description: string;
       ceu_value: number;
-      learning_objectives: { text: string; bloom_level: string }[];
+      learning_objectives: { text: string; bloom_verb: string }[];
       modules: { title: string; summary: string; lessons: { title: string; kind: string; summary: string; duration_minutes: number }[] }[];
-      final_quiz: { title: string; passing_score: number; items: { stem: string; kind: string; options: string[]; answer_index: number; rationale: string }[] };
+      final_quiz: { title: string; pass_threshold: number; items: { stem: string; options: string[]; answer_index: number; rationale: string }[] };
       pre_survey_prompt?: string;
       post_survey_prompt?: string;
     };
 
-    // Create course
     const slug = slugify(data.title) + "-" + Math.random().toString(36).slice(2, 6);
     const { data: course, error: cErr } = await context.supabase
       .from("courses")
@@ -212,42 +214,40 @@ Return JSON:
       .single();
     if (cErr) throw new Error(cErr.message);
 
-    // Learning objectives
     if (plan.learning_objectives?.length) {
       await context.supabase.from("learning_objectives").insert(
         plan.learning_objectives.map((lo, i) => ({
           course_id: course.id,
           text: lo.text,
-          bloom_level: lo.bloom_level || "understand",
-          position: i,
+          bloom_verb: lo.bloom_verb || "Understand",
+          sort_order: i,
         })),
       );
     }
 
-    // Modules + lessons
     for (let mi = 0; mi < (plan.modules ?? []).length; mi++) {
       const m = plan.modules[mi];
       const { data: mod, error: mErr } = await context.supabase
         .from("modules")
-        .insert({ course_id: course.id, title: m.title, summary: m.summary, position: mi })
+        .insert({ course_id: course.id, title: m.title, summary: m.summary, sort_order: mi })
         .select("id")
         .single();
       if (mErr) throw new Error(mErr.message);
 
+      const validKinds = ["video", "text", "activity", "quiz", "exam", "file", "heygen", "zoom_live", "talentlms"];
       const lessonsToInsert = (m.lessons ?? []).map((l, li) => ({
-        course_id: course.id,
         module_id: mod.id,
         title: l.title,
-        kind: ["video", "text", "activity", "quiz", "exam", "file", "heygen", "zoom_live", "talentlms"].includes(l.kind) ? l.kind : "text",
-        position: li,
-        content: { summary: l.summary, duration_minutes: l.duration_minutes },
+        kind: validKinds.includes(l.kind) ? l.kind : "text",
+        sort_order: li,
+        duration_minutes: l.duration_minutes ?? null,
+        content: J({ summary: l.summary }),
       }));
       if (lessonsToInsert.length) {
         await context.supabase.from("lessons").insert(lessonsToInsert);
       }
     }
 
-    // Final exam assessment + items
     if (plan.final_quiz?.items?.length) {
       const { data: assessment, error: aErr } = await context.supabase
         .from("assessments")
@@ -255,7 +255,7 @@ Return JSON:
           course_id: course.id,
           title: plan.final_quiz.title ?? "Final exam",
           kind: "final_exam",
-          passing_score: plan.final_quiz.passing_score ?? 80,
+          pass_threshold: plan.final_quiz.pass_threshold ?? 80,
         })
         .select("id")
         .single();
@@ -265,29 +265,27 @@ Return JSON:
         plan.final_quiz.items.map((it, i) => ({
           assessment_id: assessment.id,
           stem: it.stem,
-          kind: it.kind || "mcq",
-          options: it.options,
-          answer: { index: it.answer_index },
+          item_type: "mcq",
+          choices: J(it.options),
+          correct: J({ index: it.answer_index }),
           rationale: it.rationale,
-          position: i,
-          points: 1,
+          sort_order: i,
         })),
       );
     }
 
-    // Pre + post surveys (ungraded)
     await context.supabase.from("surveys").insert([
       {
         course_id: course.id,
         kind: "pre_course",
         title: "Pre-course confidence survey",
-        schema: { prompt: plan.pre_survey_prompt ?? "Rate your prior confidence on each objective (1-5).", scale: "likert_1_5" },
+        schema: J({ prompt: plan.pre_survey_prompt ?? "Rate your prior confidence (1-5).", scale: "likert_1_5" }),
       },
       {
         course_id: course.id,
         kind: "post_course",
         title: "Post-course evaluation",
-        schema: { prompt: plan.post_survey_prompt ?? "Rate the course and your post-course confidence (1-5).", scale: "likert_1_5" },
+        schema: J({ prompt: plan.post_survey_prompt ?? "Rate the course and your post-course confidence (1-5).", scale: "likert_1_5" }),
       },
     ]);
 
@@ -297,8 +295,8 @@ Return JSON:
       tenant_id: data.tenantId,
       user_id: context.userId,
       model: MODEL,
-      input: data,
-      output: plan,
+      input: J(data),
+      output: J(plan),
     });
 
     return { courseId: course.id, slug: course.slug };
@@ -323,22 +321,20 @@ export const submitActivityAndGenerate = createServerFn({ method: "POST" })
       .single();
     if (aErr) throw new Error(aErr.message);
 
-    // Save response
     const { data: respRow, error: rErr } = await context.supabase
       .from("activity_responses")
       .insert({
         activity_id: data.activityId,
         enrollment_id: data.enrollmentId,
         user_id: context.userId,
-        response: data.response,
+        response: J(data.response),
       })
       .select("id")
       .single();
     if (rErr) throw new Error(rErr.message);
 
-    // Generate work products
     const wpIds = (activity.work_product_ids ?? []) as string[];
-    const generated: { title: string; content: unknown }[] = [];
+    const generated: { title: string; content: Record<string, unknown> }[] = [];
     for (const wpId of wpIds) {
       const { data: wp } = await context.supabase
         .from("work_products")
@@ -365,13 +361,13 @@ Return JSON: { "title": "string", "sections": [ { "heading": "string", "body": "
         kind: wp.kind,
         title: wp.title,
         source_id: respRow.id,
-        metadata: { activity_id: activity.id, course_id: activity.course_id, content: output },
+        metadata: J({ activity_id: activity.id, course_id: activity.course_id, content: output }),
       });
     }
 
     await context.supabase
       .from("activity_responses")
-      .update({ ai_output: generated as unknown as object })
+      .update({ ai_output: J(generated) })
       .eq("id", respRow.id);
 
     await context.supabase.from("ai_generations").insert({
@@ -379,8 +375,8 @@ Return JSON: { "title": "string", "sections": [ { "heading": "string", "body": "
       course_id: activity.course_id,
       user_id: context.userId,
       model: MODEL,
-      input: { activityId: activity.id, response: data.response },
-      output: generated,
+      input: J({ activityId: activity.id, response: data.response }),
+      output: J(generated),
     });
 
     return { responseId: respRow.id, generated };
@@ -414,9 +410,10 @@ export const upsertActivity = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => ActivityUpsert.parse(i))
   .handler(async ({ data, context }) => {
+    const payload = { ...data, schema: J(data.schema) };
     const { data: row, error } = await context.supabase
       .from("activities")
-      .upsert(data)
+      .upsert(payload)
       .select("*")
       .single();
     if (error) throw new Error(error.message);
@@ -448,9 +445,10 @@ export const upsertWorkProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => WorkProductUpsert.parse(i))
   .handler(async ({ data, context }) => {
+    const payload = { ...data, template: J(data.template) };
     const { data: row, error } = await context.supabase
       .from("work_products")
-      .upsert(data)
+      .upsert(payload)
       .select("*")
       .single();
     if (error) throw new Error(error.message);

@@ -44,8 +44,18 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
           {isAdmin && (
             <>
-              <SectionLabel>Admin</SectionLabel>
+              <SectionLabel>LCSW Admin</SectionLabel>
               {adminNav.map((n) => (
+                <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
+                  {n.label}
+                </NavLink>
+              ))}
+            </>
+          )}
+          {isSuper && (
+            <>
+              <SectionLabel>Platform</SectionLabel>
+              {platformNav.map((n) => (
                 <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
                   {n.label}
                 </NavLink>

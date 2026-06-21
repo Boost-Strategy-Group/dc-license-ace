@@ -116,6 +116,8 @@ function BuilderPage() {
           <ObjectivesPanel courseId={courseId} />
           <AssessmentsPanel courseId={courseId} />
           <SurveysPanel courseId={courseId} />
+          <WorkProductsPanel courseId={courseId} />
+          <ActivitiesPanel courseId={courseId} />
         </div>
         <aside className="space-y-6">
           <ReadinessPanel courseId={courseId} />

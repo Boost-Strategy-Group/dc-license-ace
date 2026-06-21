@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { CONTENT_AREAS, areaShort } from "@/lib/exam";
 import { ArrowRight, BookOpen, Repeat2, Timer } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { GoSproutCard } from "@/components/GoSproutCard";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · Boost LCSW Readiness" }, { name: "description", content: "Your personal LCSW readiness score, weak-area flags, and recent sessions." }] }),
@@ -55,6 +56,8 @@ function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <GoSproutCard />
 
       <Card>
         <CardHeader><CardTitle className="font-display">Performance by content area</CardTitle></CardHeader>

@@ -379,7 +379,7 @@ Return JSON: { "title": "string", "sections": [ { "heading": "string", "body": "
       output: J(generated),
     });
 
-    return { responseId: respRow.id, generated };
+    return { responseId: respRow.id, generated: JSON.parse(JSON.stringify(generated)) as Array<{ title: string; content: unknown }> };
   });
 
 export const listActivities = createServerFn({ method: "GET" })

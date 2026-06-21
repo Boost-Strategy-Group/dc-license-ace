@@ -118,8 +118,8 @@ function PlayerPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <LessonViewer lesson={activeLesson} />
-              {!completedIds.has(activeLesson.id) && (
+              <LessonViewer lesson={activeLesson} enrollmentId={data.enrollment.id} />
+              {activeLesson.kind !== "quiz" && activeLesson.kind !== "exam" && !completedIds.has(activeLesson.id) && (
                 <Button onClick={() => completeMut.mutate(activeLesson.id)} disabled={completeMut.isPending}>
                   Mark complete
                 </Button>

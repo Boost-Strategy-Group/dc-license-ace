@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Circle, Lock, Video, FileText, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
 import { QuizRunner } from "@/components/quiz-runner";
 import { ActivityRunner } from "@/components/activity-runner";
+import { HeyGenLessonPlayer, ZoomLessonPlayer, TalentLmsLessonPlayer } from "@/components/lesson-embed-players";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/learn/$courseId")({
   head: () => ({ meta: [{ title: "Course Player · Boost" }] }),
@@ -138,6 +140,7 @@ function PlayerPage() {
 }
 
 function LessonViewer({ lesson, enrollmentId }: { lesson: any; enrollmentId: string }) {
+  const { isAdmin } = useAuth();
   const c = lesson.content ?? {};
   if (lesson.kind === "text") {
     return <div className="prose prose-sm max-w-none whitespace-pre-wrap text-sm">{c.body ?? "No content."}</div>;
@@ -154,13 +157,13 @@ function LessonViewer({ lesson, enrollmentId }: { lesson: any; enrollmentId: str
     return <a href={c.url} target="_blank" rel="noreferrer" className="text-primary underline">Download / open material</a>;
   }
   if (lesson.kind === "zoom_live") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">Embedded Zoom session — coming in Phase D.</div>;
+    return <ZoomLessonPlayer lessonId={lesson.id} content={c} />;
   }
   if (lesson.kind === "heygen") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">HeyGen-narrated lesson — generation engine wired in Phase D.</div>;
+    return <HeyGenLessonPlayer lessonId={lesson.id} content={c} isAdmin={isAdmin} />;
   }
   if (lesson.kind === "talentlms") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">TalentLMS embed — SSO wrapper added in Phase D.</div>;
+    return <TalentLmsLessonPlayer content={c} />;
   }
   if (lesson.kind === "quiz" || lesson.kind === "exam") {
     if (!c.assessment_id) return <div className="rounded-md border bg-muted/40 p-4 text-sm">No assessment attached. Open the builder and set <code>content.assessment_id</code> on this lesson.</div>;

@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listPublishedCourses, listMyEnrollments, enrollInCourse } from "@/lib/courses.functions";
+import { createCheckoutSession } from "@/lib/integrations.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { GraduationCap, Play } from "lucide-react";
+import { GraduationCap, Play, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/_app/catalog")({
   head: () => ({ meta: [{ title: "Catalog · Boost" }] }),
@@ -17,18 +18,22 @@ function CatalogPage() {
   const listFn = useServerFn(listPublishedCourses);
   const enrollFn = useServerFn(enrollInCourse);
   const myFn = useServerFn(listMyEnrollments);
+  const checkoutFn = useServerFn(createCheckoutSession);
   const qc = useQueryClient();
 
   const { data: courses, isLoading } = useQuery({ queryKey: ["catalog"], queryFn: () => listFn() });
   const { data: mine } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => myFn() });
   const enrolledIds = new Set((mine ?? []).map((e: any) => e.course_id));
 
-  const mut = useMutation({
+  const enrollMut = useMutation({
     mutationFn: (courseId: string) => enrollFn({ data: { courseId } }),
-    onSuccess: () => {
-      toast.success("Enrolled");
-      qc.invalidateQueries({ queryKey: ["my-enrollments"] });
-    },
+    onSuccess: () => { toast.success("Enrolled"); qc.invalidateQueries({ queryKey: ["my-enrollments"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const payMut = useMutation({
+    mutationFn: (courseId: string) =>
+      checkoutFn({ data: { courseId, returnUrl: window.location.origin + "/catalog" } }),
+    onSuccess: (r) => { if (r.url) window.location.href = r.url; },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -57,13 +62,18 @@ function CatalogPage() {
                 <div className="flex gap-2 text-xs text-muted-foreground">
                   <span>{c.contact_hours ?? 0}h</span><span>·</span>
                   <span>{c.ceu_value ?? 0} CEU</span>
+                  {c.price_cents > 0 && (<><span>·</span><span>${(c.price_cents / 100).toFixed(2)}</span></>)}
                 </div>
                 {enrolled ? (
                   <Link to="/learn/$courseId" params={{ courseId: c.id }}>
                     <Button className="w-full gap-2"><Play className="h-4 w-4" /> Continue</Button>
                   </Link>
+                ) : c.price_cents > 0 ? (
+                  <Button className="w-full gap-2" onClick={() => payMut.mutate(c.id)} disabled={payMut.isPending}>
+                    <CreditCard className="h-4 w-4" /> Buy & enroll · ${(c.price_cents / 100).toFixed(2)}
+                  </Button>
                 ) : (
-                  <Button className="w-full gap-2" onClick={() => mut.mutate(c.id)} disabled={mut.isPending}>
+                  <Button className="w-full gap-2" onClick={() => enrollMut.mutate(c.id)} disabled={enrollMut.isPending}>
                     <GraduationCap className="h-4 w-4" /> Enroll
                   </Button>
                 )}

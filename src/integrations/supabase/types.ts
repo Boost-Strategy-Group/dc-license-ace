@@ -304,20 +304,24 @@ export type Database = {
         Row: {
           audience: string | null
           branding: Json
+          certifier_group_id: string | null
           ceu_value: number | null
           contact_hours: number | null
           cover_image_url: string | null
           created_at: string
           created_by: string | null
+          currency: string
           delivery_modes: string[]
           dependency_mode: string
           description: string | null
           id: string
           instructor_id: string | null
           language: string
+          price_cents: number
           requires_needs_assessment: boolean
           slug: string
           status: string
+          stripe_price_id: string | null
           tenant_id: string
           title: string
           updated_at: string
@@ -325,20 +329,24 @@ export type Database = {
         Insert: {
           audience?: string | null
           branding?: Json
+          certifier_group_id?: string | null
           ceu_value?: number | null
           contact_hours?: number | null
           cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           delivery_modes?: string[]
           dependency_mode?: string
           description?: string | null
           id?: string
           instructor_id?: string | null
           language?: string
+          price_cents?: number
           requires_needs_assessment?: boolean
           slug: string
           status?: string
+          stripe_price_id?: string | null
           tenant_id: string
           title: string
           updated_at?: string
@@ -346,20 +354,24 @@ export type Database = {
         Update: {
           audience?: string | null
           branding?: Json
+          certifier_group_id?: string | null
           ceu_value?: number | null
           contact_hours?: number | null
           cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           delivery_modes?: string[]
           dependency_mode?: string
           description?: string | null
           id?: string
           instructor_id?: string | null
           language?: string
+          price_cents?: number
           requires_needs_assessment?: boolean
           slug?: string
           status?: string
+          stripe_price_id?: string | null
           tenant_id?: string
           title?: string
           updated_at?: string
@@ -392,8 +404,10 @@ export type Database = {
           created_at: string
           funding_source: string | null
           id: string
+          payment_status: string
           started_at: string
           status: string
+          stripe_session_id: string | null
           tenant_id: string
           updated_at: string
           user_id: string
@@ -408,8 +422,10 @@ export type Database = {
           created_at?: string
           funding_source?: string | null
           id?: string
+          payment_status?: string
           started_at?: string
           status?: string
+          stripe_session_id?: string | null
           tenant_id: string
           updated_at?: string
           user_id: string
@@ -424,8 +440,10 @@ export type Database = {
           created_at?: string
           funding_source?: string | null
           id?: string
+          payment_status?: string
           started_at?: string
           status?: string
+          stripe_session_id?: string | null
           tenant_id?: string
           updated_at?: string
           user_id?: string

@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Repeat2, Sparkles, Timer, Users, Wallet } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Plug, Repeat2, Sparkles, Timer, Users, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +30,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },
     { to: "/admin/courses", label: "Courses", icon: BookOpen },
     { to: "/admin/ai-factory", label: "AI Course Factory", icon: Sparkles },
+    { to: "/admin/integrations", label: "Integrations", icon: Plug },
   ];
   return (
     <div className="flex min-h-screen bg-background">

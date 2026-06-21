@@ -27,6 +27,7 @@ import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.studen
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
+import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
 import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
@@ -120,6 +121,11 @@ const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
+  id: '/ai-factory',
+  path: '/ai-factory',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
   id: '/$tenantId',
   path: '/$tenantId',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByTo {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
     | '/admin/questions'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
     | '/admin/questions'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/_app/vault'
     | '/c/$slug'
+    | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
     | '/_app/admin/questions'
@@ -410,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAnalyticsRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/ai-factory': {
+      id: '/_app/admin/ai-factory'
+      path: '/ai-factory'
+      fullPath: '/admin/ai-factory'
+      preLoaderRoute: typeof AppAdminAiFactoryRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/tenants/$tenantId': {
       id: '/_app/admin/tenants/$tenantId'
       path: '/$tenantId'
@@ -474,6 +493,7 @@ const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
 )
 
 interface AppAdminRouteChildren {
+  AppAdminAiFactoryRoute: typeof AppAdminAiFactoryRoute
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
   AppAdminCoursesRoute: typeof AppAdminCoursesRouteWithChildren
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
@@ -482,6 +502,7 @@ interface AppAdminRouteChildren {
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAiFactoryRoute: AppAdminAiFactoryRoute,
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
   AppAdminCoursesRoute: AppAdminCoursesRouteWithChildren,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,

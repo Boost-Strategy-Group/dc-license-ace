@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
@@ -47,6 +48,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CSlugRoute = CSlugRouteImport.update({
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/_app/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
@@ -330,6 +342,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   CSlugRoute: typeof CSlugRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -354,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$slug': {
@@ -610,6 +630,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   CSlugRoute: CSlugRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport

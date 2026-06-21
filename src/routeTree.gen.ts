@@ -29,6 +29,7 @@ import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
+import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -129,6 +130,12 @@ const AppAdminCoursesCourseIdRoute = AppAdminCoursesCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppAdminCoursesRoute,
 } as any)
+const AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute =
+  AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport.update({
+    id: '/assessments/$assessmentId',
+    path: '/assessments/$assessmentId',
+    getParentRoute: () => AppAdminCoursesCourseIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -148,8 +155,9 @@ export interface FileRoutesByFullPath {
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
-  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
+  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -169,8 +177,9 @@ export interface FileRoutesByTo {
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
-  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
+  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -192,8 +201,9 @@ export interface FileRoutesById {
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/_app/learn/$courseId': typeof AppLearnCourseIdRoute
   '/_app/session/$id': typeof AppSessionIdRoute
-  '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
+  '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
     | '__root__'
     | '/'
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
+    | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -411,15 +424,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminCoursesCourseIdRouteImport
       parentRoute: typeof AppAdminCoursesRoute
     }
+    '/_app/admin/courses/$courseId/assessments/$assessmentId': {
+      id: '/_app/admin/courses/$courseId/assessments/$assessmentId'
+      path: '/assessments/$assessmentId'
+      fullPath: '/admin/courses/$courseId/assessments/$assessmentId'
+      preLoaderRoute: typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport
+      parentRoute: typeof AppAdminCoursesCourseIdRoute
+    }
   }
 }
 
+interface AppAdminCoursesCourseIdRouteChildren {
+  AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute: typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
+}
+
+const AppAdminCoursesCourseIdRouteChildren: AppAdminCoursesCourseIdRouteChildren =
+  {
+    AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute:
+      AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute,
+  }
+
+const AppAdminCoursesCourseIdRouteWithChildren =
+  AppAdminCoursesCourseIdRoute._addFileChildren(
+    AppAdminCoursesCourseIdRouteChildren,
+  )
+
 interface AppAdminCoursesRouteChildren {
-  AppAdminCoursesCourseIdRoute: typeof AppAdminCoursesCourseIdRoute
+  AppAdminCoursesCourseIdRoute: typeof AppAdminCoursesCourseIdRouteWithChildren
 }
 
 const AppAdminCoursesRouteChildren: AppAdminCoursesRouteChildren = {
-  AppAdminCoursesCourseIdRoute: AppAdminCoursesCourseIdRoute,
+  AppAdminCoursesCourseIdRoute: AppAdminCoursesCourseIdRouteWithChildren,
 }
 
 const AppAdminCoursesRouteWithChildren = AppAdminCoursesRoute._addFileChildren(

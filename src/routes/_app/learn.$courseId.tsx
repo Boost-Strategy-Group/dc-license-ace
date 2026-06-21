@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Circle, Lock, Video, FileText, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
+import { QuizRunner } from "@/components/quiz-runner";
 
 export const Route = createFileRoute("/_app/learn/$courseId")({
   head: () => ({ meta: [{ title: "Course Player · Boost" }] }),
@@ -118,8 +119,8 @@ function PlayerPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <LessonViewer lesson={activeLesson} />
-              {!completedIds.has(activeLesson.id) && (
+              <LessonViewer lesson={activeLesson} enrollmentId={data.enrollment.id} />
+              {activeLesson.kind !== "quiz" && activeLesson.kind !== "exam" && !completedIds.has(activeLesson.id) && (
                 <Button onClick={() => completeMut.mutate(activeLesson.id)} disabled={completeMut.isPending}>
                   Mark complete
                 </Button>
@@ -135,7 +136,7 @@ function PlayerPage() {
   );
 }
 
-function LessonViewer({ lesson }: { lesson: any }) {
+function LessonViewer({ lesson, enrollmentId }: { lesson: any; enrollmentId: string }) {
   const c = lesson.content ?? {};
   if (lesson.kind === "text") {
     return <div className="prose prose-sm max-w-none whitespace-pre-wrap text-sm">{c.body ?? "No content."}</div>;
@@ -161,7 +162,8 @@ function LessonViewer({ lesson }: { lesson: any }) {
     return <div className="rounded-md border bg-muted/40 p-4 text-sm">TalentLMS embed — SSO wrapper added in Phase D.</div>;
   }
   if (lesson.kind === "quiz" || lesson.kind === "exam") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">Assessment authoring & grading lands in Phase B.2 (next iteration).</div>;
+    if (!c.assessment_id) return <div className="rounded-md border bg-muted/40 p-4 text-sm">No assessment attached. Open the builder and set <code>content.assessment_id</code> on this lesson.</div>;
+    return <QuizRunner assessmentId={c.assessment_id} enrollmentId={enrollmentId} lessonId={lesson.id} />;
   }
   if (lesson.kind === "activity") {
     return <div className="rounded-md border bg-muted/40 p-4 text-sm">Activity prompts feed the AI Work Product Engine — Phase C.</div>;

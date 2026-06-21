@@ -90,22 +90,32 @@ function BuilderPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base">Modules & Lessons</CardTitle>
-          <NewModuleButton courseId={courseId} order={(modules?.length ?? 0) + 1} />
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {(modules ?? []).map((m: any) => (
-            <ModuleBlock
-              key={m.id}
-              module={m}
-              lessons={(lessons ?? []).filter((l: any) => l.module_id === m.id)}
-            />
-          ))}
-          {!modules?.length && <p className="text-sm text-muted-foreground">No modules yet — add the first one to start structuring your course.</p>}
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <CardTitle className="text-base">Modules & Lessons</CardTitle>
+              <NewModuleButton courseId={courseId} order={(modules?.length ?? 0) + 1} />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(modules ?? []).map((m: any) => (
+                <ModuleBlock
+                  key={m.id}
+                  module={m}
+                  lessons={(lessons ?? []).filter((l: any) => l.module_id === m.id)}
+                />
+              ))}
+              {!modules?.length && <p className="text-sm text-muted-foreground">No modules yet — add the first one to start structuring your course.</p>}
+            </CardContent>
+          </Card>
+          <ObjectivesPanel courseId={courseId} />
+          <AssessmentsPanel courseId={courseId} />
+          <SurveysPanel courseId={courseId} />
+        </div>
+        <aside className="space-y-6">
+          <ReadinessPanel courseId={courseId} />
+        </aside>
+      </div>
     </div>
   );
 }

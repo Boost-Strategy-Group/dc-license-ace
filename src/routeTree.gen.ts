@@ -22,6 +22,7 @@ import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
+import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 
@@ -89,6 +90,11 @@ const AppAdminQuestionsRoute = AppAdminQuestionsRouteImport.update({
   path: '/questions',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminCoursesRoute = AppAdminCoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/courses': typeof AppAdminCoursesRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/review': typeof AppReviewRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/courses': typeof AppAdminCoursesRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRoute
   '/c/$slug': typeof CSlugRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/_app/admin/courses': typeof AppAdminCoursesRoute
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/c/$slug'
     | '/admin/analytics'
+    | '/admin/courses'
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/c/$slug'
     | '/admin/analytics'
+    | '/admin/courses'
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/c/$slug'
     | '/_app/admin/analytics'
+    | '/_app/admin/courses'
     | '/_app/admin/questions'
     | '/_app/admin/students'
     | '/_app/admin/tenants'
@@ -302,6 +314,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminQuestionsRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/courses': {
+      id: '/_app/admin/courses'
+      path: '/courses'
+      fullPath: '/admin/courses'
+      preLoaderRoute: typeof AppAdminCoursesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/analytics': {
       id: '/_app/admin/analytics'
       path: '/analytics'
@@ -333,6 +352,7 @@ const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
 
 interface AppAdminRouteChildren {
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+  AppAdminCoursesRoute: typeof AppAdminCoursesRoute
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
   AppAdminStudentsRoute: typeof AppAdminStudentsRoute
   AppAdminTenantsRoute: typeof AppAdminTenantsRouteWithChildren
@@ -340,6 +360,7 @@ interface AppAdminRouteChildren {
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+  AppAdminCoursesRoute: AppAdminCoursesRoute,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,
   AppAdminStudentsRoute: AppAdminStudentsRoute,
   AppAdminTenantsRoute: AppAdminTenantsRouteWithChildren,

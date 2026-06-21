@@ -29,6 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const platformNav = [
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },
     { to: "/admin/courses", label: "Courses", icon: BookOpen },
+    { to: "/admin/ai-factory", label: "AI Course Factory", icon: Sparkles },
   ];
   return (
     <div className="flex min-h-screen bg-background">

@@ -22,6 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Trash2, FileText, Video, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
 import { ObjectivesPanel, AssessmentsPanel, SurveysPanel, ReadinessPanel } from "@/components/course-builder-panels";
+import { ActivitiesPanel, WorkProductsPanel } from "@/components/activities-builder-panels";
 
 export const Route = createFileRoute("/_app/admin/courses/$courseId")({
   head: () => ({ meta: [{ title: "Course Builder · Boost" }] }),

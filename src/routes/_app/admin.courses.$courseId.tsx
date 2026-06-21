@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Trash2, FileText, Video, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
+import { ObjectivesPanel, AssessmentsPanel, SurveysPanel, ReadinessPanel } from "@/components/course-builder-panels";
 
 export const Route = createFileRoute("/_app/admin/courses/$courseId")({
   head: () => ({ meta: [{ title: "Course Builder · Boost" }] }),

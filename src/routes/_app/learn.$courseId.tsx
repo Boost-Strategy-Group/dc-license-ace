@@ -167,7 +167,8 @@ function LessonViewer({ lesson, enrollmentId }: { lesson: any; enrollmentId: str
     return <QuizRunner assessmentId={c.assessment_id} enrollmentId={enrollmentId} lessonId={lesson.id} />;
   }
   if (lesson.kind === "activity") {
-    return <div className="rounded-md border bg-muted/40 p-4 text-sm">Activity prompts feed the AI Work Product Engine — Phase C.</div>;
+    if (!c.activity_id) return <div className="rounded-md border bg-muted/40 p-4 text-sm">No activity attached. Open the builder and set <code>content.activity_id</code> on this lesson.</div>;
+    return <ActivityRunner activityId={c.activity_id} enrollmentId={enrollmentId} />;
   }
   return <p className="text-sm text-muted-foreground">No preview for this lesson type.</p>;
 }

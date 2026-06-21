@@ -30,6 +30,7 @@ import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analy
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
+import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
 import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
 
 const AuthRoute = AuthRouteImport.update({
@@ -136,6 +137,12 @@ const AppAdminCoursesCourseIdRoute = AppAdminCoursesCourseIdRouteImport.update({
   path: '/$courseId',
   getParentRoute: () => AppAdminCoursesRoute,
 } as any)
+const AppAdminCoursesCourseIdNeedsAssessmentRoute =
+  AppAdminCoursesCourseIdNeedsAssessmentRouteImport.update({
+    id: '/needs-assessment',
+    path: '/needs-assessment',
+    getParentRoute: () => AppAdminCoursesCourseIdRoute,
+  } as any)
 const AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute =
   AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport.update({
     id: '/assessments/$assessmentId',
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesByTo {
@@ -187,6 +195,7 @@ export interface FileRoutesByTo {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesById {
@@ -212,6 +221,7 @@ export interface FileRoutesById {
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
+  '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRouteTypes {
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
+    | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
     | '__root__'
@@ -284,6 +296,7 @@ export interface FileRouteTypes {
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
+    | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
 }
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminCoursesCourseIdRouteImport
       parentRoute: typeof AppAdminCoursesRoute
     }
+    '/_app/admin/courses/$courseId/needs-assessment': {
+      id: '/_app/admin/courses/$courseId/needs-assessment'
+      path: '/needs-assessment'
+      fullPath: '/admin/courses/$courseId/needs-assessment'
+      preLoaderRoute: typeof AppAdminCoursesCourseIdNeedsAssessmentRouteImport
+      parentRoute: typeof AppAdminCoursesCourseIdRoute
+    }
     '/_app/admin/courses/$courseId/assessments/$assessmentId': {
       id: '/_app/admin/courses/$courseId/assessments/$assessmentId'
       path: '/assessments/$assessmentId'
@@ -454,11 +474,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppAdminCoursesCourseIdRouteChildren {
+  AppAdminCoursesCourseIdNeedsAssessmentRoute: typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute: typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 
 const AppAdminCoursesCourseIdRouteChildren: AppAdminCoursesCourseIdRouteChildren =
   {
+    AppAdminCoursesCourseIdNeedsAssessmentRoute:
+      AppAdminCoursesCourseIdNeedsAssessmentRoute,
     AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute:
       AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute,
   }

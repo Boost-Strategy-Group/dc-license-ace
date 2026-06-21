@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
@@ -29,7 +30,7 @@ import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.in
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
-import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe.webhook'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
 import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
 import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
@@ -47,6 +48,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CSlugRoute = CSlugRouteImport.update({
@@ -134,11 +140,12 @@ const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
   path: '/ai-factory',
   getParentRoute: () => AppAdminRoute,
 } as any)
-const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
-  id: '/api/public/stripe/webhook',
-  path: '/api/public/stripe/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
   id: '/$tenantId',
   path: '/$tenantId',
@@ -173,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -184,7 +192,7 @@ export interface FileRoutesByFullPath {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
-  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -199,6 +207,7 @@ export interface FileRoutesByTo {
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -210,7 +219,7 @@ export interface FileRoutesByTo {
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
-  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -227,6 +236,7 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -238,7 +248,7 @@ export interface FileRoutesById {
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
-  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -266,7 +277,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
-    | '/api/public/stripe/webhook'
+    | '/api/public/payments/webhook'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/review'
     | '/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -292,7 +304,7 @@ export interface FileRouteTypes {
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
-    | '/api/public/stripe/webhook'
+    | '/api/public/payments/webhook'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
@@ -308,6 +320,7 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/_app/vault'
     | '/c/$slug'
+    | '/checkout/return'
     | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
@@ -319,7 +332,7 @@ export interface FileRouteTypes {
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
-    | '/api/public/stripe/webhook'
+    | '/api/public/payments/webhook'
     | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
@@ -329,7 +342,8 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   CSlugRoute: typeof CSlugRoute
-  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -353,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/c/$slug': {
@@ -474,11 +495,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAiFactoryRouteImport
       parentRoute: typeof AppAdminRoute
     }
-    '/api/public/stripe/webhook': {
-      id: '/api/public/stripe/webhook'
-      path: '/api/public/stripe/webhook'
-      fullPath: '/api/public/stripe/webhook'
-      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/admin/tenants/$tenantId': {
@@ -609,18 +630,9 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   CSlugRoute: CSlugRoute,
-  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

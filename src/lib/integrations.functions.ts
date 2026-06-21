@@ -1,6 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type Stripe from "stripe";
+import {
+  type StripeEnv,
+  createStripeClient,
+  getStripeErrorMessage,
+} from "@/lib/stripe.server";
 
 type Json = never;
 const J = (v: unknown) => v as Json;
@@ -17,8 +23,8 @@ function getEnv(name: string): string | null {
 export const getIntegrationStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => ({
-    stripe: !!getEnv("STRIPE_SECRET_KEY"),
-    stripeWebhook: !!getEnv("STRIPE_WEBHOOK_SECRET"),
+    stripe: !!(getEnv("STRIPE_SANDBOX_API_KEY") || getEnv("STRIPE_LIVE_API_KEY")),
+    stripeLive: !!getEnv("STRIPE_LIVE_API_KEY"),
     heygen: !!getEnv("HEYGEN_API_KEY"),
     zoom: !!(getEnv("ZOOM_SDK_KEY") && getEnv("ZOOM_SDK_SECRET")),
     certifier: !!getEnv("CERTIFIER_API_KEY"),
@@ -26,75 +32,129 @@ export const getIntegrationStatus = createServerFn({ method: "GET" })
   }));
 
 // =====================================================================
-// Stripe — Checkout Session for paid course enrollment
+// Stripe — Embedded Checkout via Lovable managed payments
 // =====================================================================
+
+async function resolveOrCreateCustomer(
+  stripe: Stripe,
+  options: { email?: string; userId: string },
+): Promise<string> {
+  if (!/^[a-zA-Z0-9_-]+$/.test(options.userId)) throw new Error("Invalid userId");
+  const found = await stripe.customers.search({
+    query: `metadata['userId']:'${options.userId}'`,
+    limit: 1,
+  });
+  if (found.data.length) return found.data[0].id;
+  if (options.email) {
+    const existing = await stripe.customers.list({ email: options.email, limit: 1 });
+    if (existing.data.length) {
+      const customer = existing.data[0];
+      if (customer.metadata?.userId !== options.userId) {
+        await stripe.customers.update(customer.id, {
+          metadata: { ...customer.metadata, userId: options.userId },
+        });
+      }
+      return customer.id;
+    }
+  }
+  const created = await stripe.customers.create({
+    ...(options.email && { email: options.email }),
+    metadata: { userId: options.userId },
+  });
+  return created.id;
+}
+
+type CheckoutResult = { clientSecret: string } | { error: string };
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ courseId: z.string().uuid(), returnUrl: z.string().url() }).parse(i))
-  .handler(async ({ data, context }) => {
-    const key = getEnv("STRIPE_SECRET_KEY");
-    if (!key) throw new Error("Stripe is not configured. Add STRIPE_SECRET_KEY to enable paid courses.");
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        courseId: z.string().uuid(),
+        returnUrl: z.string().url(),
+        environment: z.enum(["sandbox", "live"]),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    try {
+      const { data: course, error } = await context.supabase
+        .from("courses")
+        .select("id, tenant_id, title, description, price_cents, currency, status")
+        .eq("id", data.courseId)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!course) throw new Error("Course not found");
+      if (course.status !== "published") throw new Error("Course is not published");
+      if (!course.price_cents || course.price_cents <= 0)
+        throw new Error("Course is free — enroll directly.");
 
-    const { data: course, error } = await context.supabase
-      .from("courses")
-      .select("id, tenant_id, title, price_cents, currency, status")
-      .eq("id", data.courseId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!course) throw new Error("Course not found");
-    if (course.status !== "published") throw new Error("Course is not published");
-    if (!course.price_cents || course.price_cents <= 0) throw new Error("Course is free — enroll directly.");
+      const { data: enrollment, error: eErr } = await context.supabase
+        .from("enrollments")
+        .upsert(
+          {
+            course_id: course.id,
+            tenant_id: course.tenant_id,
+            user_id: context.userId,
+            status: "pending_payment",
+            payment_status: "pending",
+            funding_source: "self_pay",
+            started_at: new Date().toISOString(),
+          },
+          { onConflict: "course_id,user_id" },
+        )
+        .select("id")
+        .single();
+      if (eErr) throw new Error(eErr.message);
 
-    // Pre-create a pending enrollment so the webhook has something to update.
-    const { data: enrollment, error: eErr } = await context.supabase
-      .from("enrollments")
-      .upsert(
-        {
+      const stripe = createStripeClient(data.environment);
+      const { data: { user } } = await context.supabase.auth.getUser();
+      const customerId = await resolveOrCreateCustomer(stripe, {
+        email: user?.email ?? undefined,
+        userId: context.userId,
+      });
+
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        ui_mode: "embedded_page",
+        return_url: `${data.returnUrl}?session_id={CHECKOUT_SESSION_ID}&course=${course.id}`,
+        customer: customerId,
+        client_reference_id: enrollment.id,
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: (course.currency || "usd").toLowerCase(),
+              unit_amount: course.price_cents,
+              product_data: {
+                name: course.title,
+                ...(course.description
+                  ? { description: course.description.slice(0, 500) }
+                  : {}),
+                tax_code: "txcd_10000000",
+              },
+            },
+          },
+        ],
+        payment_intent_data: { description: course.title },
+        metadata: {
+          enrollment_id: enrollment.id,
           course_id: course.id,
-          tenant_id: course.tenant_id,
           user_id: context.userId,
-          status: "pending_payment",
-          payment_status: "pending",
-          funding_source: "self_pay",
-          started_at: new Date().toISOString(),
         },
-        { onConflict: "course_id,user_id" },
-      )
-      .select("id")
-      .single();
-    if (eErr) throw new Error(eErr.message);
+        managed_payments: { enabled: true },
+      } as Stripe.Checkout.SessionCreateParams);
 
-    const body = new URLSearchParams();
-    body.set("mode", "payment");
-    body.set("success_url", `${data.returnUrl}?stripe_status=success&course=${course.id}`);
-    body.set("cancel_url", `${data.returnUrl}?stripe_status=cancel&course=${course.id}`);
-    body.set("client_reference_id", enrollment.id);
-    body.set("metadata[enrollment_id]", enrollment.id);
-    body.set("metadata[course_id]", course.id);
-    body.set("metadata[user_id]", context.userId);
-    body.set("line_items[0][quantity]", "1");
-    body.set("line_items[0][price_data][currency]", course.currency || "usd");
-    body.set("line_items[0][price_data][unit_amount]", String(course.price_cents));
-    body.set("line_items[0][price_data][product_data][name]", course.title);
+      await context.supabase
+        .from("enrollments")
+        .update({ stripe_session_id: session.id ?? null })
+        .eq("id", enrollment.id);
 
-    const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: body.toString(),
-    });
-    const json = (await res.json()) as { id?: string; url?: string; error?: { message?: string } };
-    if (!res.ok) throw new Error(json.error?.message ?? "Stripe error");
-
-    await context.supabase
-      .from("enrollments")
-      .update({ stripe_session_id: json.id ?? null })
-      .eq("id", enrollment.id);
-
-    return { url: json.url, sessionId: json.id };
+      return { clientSecret: session.client_secret ?? "" };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
   });
 
 // =====================================================================

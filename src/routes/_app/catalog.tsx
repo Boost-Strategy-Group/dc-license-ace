@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listPublishedCourses, listMyEnrollments, enrollInCourse } from "@/lib/courses.functions";
-import { createCheckoutSession } from "@/lib/integrations.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { toast } from "sonner";
 import { GraduationCap, Play, CreditCard } from "lucide-react";
 
@@ -18,8 +21,8 @@ function CatalogPage() {
   const listFn = useServerFn(listPublishedCourses);
   const enrollFn = useServerFn(enrollInCourse);
   const myFn = useServerFn(listMyEnrollments);
-  const checkoutFn = useServerFn(createCheckoutSession);
   const qc = useQueryClient();
+  const [checkoutCourseId, setCheckoutCourseId] = useState<string | null>(null);
 
   const { data: courses, isLoading } = useQuery({ queryKey: ["catalog"], queryFn: () => listFn() });
   const { data: mine } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => myFn() });
@@ -30,15 +33,10 @@ function CatalogPage() {
     onSuccess: () => { toast.success("Enrolled"); qc.invalidateQueries({ queryKey: ["my-enrollments"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
-  const payMut = useMutation({
-    mutationFn: (courseId: string) =>
-      checkoutFn({ data: { courseId, returnUrl: window.location.origin + "/catalog" } }),
-    onSuccess: (r) => { if (r.url) window.location.href = r.url; },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
+      <PaymentTestModeBanner />
       <div>
         <h1 className="font-display text-3xl font-semibold">Course catalog</h1>
         <p className="text-sm text-muted-foreground">Programs available across the BOOST learning network.</p>
@@ -69,7 +67,7 @@ function CatalogPage() {
                     <Button className="w-full gap-2"><Play className="h-4 w-4" /> Continue</Button>
                   </Link>
                 ) : c.price_cents > 0 ? (
-                  <Button className="w-full gap-2" onClick={() => payMut.mutate(c.id)} disabled={payMut.isPending}>
+                  <Button className="w-full gap-2" onClick={() => setCheckoutCourseId(c.id)}>
                     <CreditCard className="h-4 w-4" /> Buy & enroll · ${(c.price_cents / 100).toFixed(2)}
                   </Button>
                 ) : (
@@ -85,6 +83,13 @@ function CatalogPage() {
           <p className="col-span-full text-sm text-muted-foreground">No published courses yet.</p>
         )}
       </div>
+
+      <Dialog open={!!checkoutCourseId} onOpenChange={(o) => !o && setCheckoutCourseId(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Complete your enrollment</DialogTitle></DialogHeader>
+          {checkoutCourseId && <StripeEmbeddedCheckout courseId={checkoutCourseId} />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

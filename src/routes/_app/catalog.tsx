@@ -62,13 +62,18 @@ function CatalogPage() {
                 <div className="flex gap-2 text-xs text-muted-foreground">
                   <span>{c.contact_hours ?? 0}h</span><span>·</span>
                   <span>{c.ceu_value ?? 0} CEU</span>
+                  {c.price_cents > 0 && (<><span>·</span><span>${(c.price_cents / 100).toFixed(2)}</span></>)}
                 </div>
                 {enrolled ? (
                   <Link to="/learn/$courseId" params={{ courseId: c.id }}>
                     <Button className="w-full gap-2"><Play className="h-4 w-4" /> Continue</Button>
                   </Link>
+                ) : c.price_cents > 0 ? (
+                  <Button className="w-full gap-2" onClick={() => payMut.mutate(c.id)} disabled={payMut.isPending}>
+                    <CreditCard className="h-4 w-4" /> Buy & enroll · ${(c.price_cents / 100).toFixed(2)}
+                  </Button>
                 ) : (
-                  <Button className="w-full gap-2" onClick={() => mut.mutate(c.id)} disabled={mut.isPending}>
+                  <Button className="w-full gap-2" onClick={() => enrollMut.mutate(c.id)} disabled={enrollMut.isPending}>
                     <GraduationCap className="h-4 w-4" /> Enroll
                   </Button>
                 )}

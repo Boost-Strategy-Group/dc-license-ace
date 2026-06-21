@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ExternalLink, Trash2, UserPlus } from "lucide-react";
+import { GoSproutAdminPanel } from "@/components/GoSproutAdminPanel";
 
 export const Route = createFileRoute("/_app/admin/tenants/$tenantId")({
   head: () => ({ meta: [{ title: "Tenant · Boost Admin" }] }),
@@ -196,6 +197,8 @@ function TenantDetail() {
           )}
         </CardContent>
       </Card>
+
+      <GoSproutAdminPanel tenantId={tenantId} />
     </div>
   );
 }

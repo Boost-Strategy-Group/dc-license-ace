@@ -23,7 +23,7 @@ export type CourseRow = {
 };
 
 const courseCols =
-  "id, tenant_id, slug, title, description, audience, contact_hours, ceu_value, delivery_modes, language, status, dependency_mode, requires_needs_assessment, instructor_id, cover_image_url, created_at, updated_at";
+  "id, tenant_id, slug, title, description, audience, contact_hours, ceu_value, delivery_modes, language, status, dependency_mode, requires_needs_assessment, instructor_id, cover_image_url, price_cents, currency, certifier_group_id, created_at, updated_at";
 
 // ---------- Courses ----------
 

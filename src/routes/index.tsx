@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { listTenants } from "@/lib/tenants.functions";
+import { listPublicTenants } from "@/lib/tenants.functions";
 import { Award, Building2, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -33,12 +33,10 @@ function Landing() {
     if (!loading && user) navigate({ to: "/dashboard" });
   }, [loading, user, navigate]);
 
-  const listFn = useServerFn(listTenants);
-  // anonymous read works via the public-landing SELECT policy on tenants
+  const listFn = useServerFn(listPublicTenants);
   const { data: tenants } = useQuery({
     queryKey: ["public-tenants"],
     queryFn: () => listFn().catch(() => []),
-    enabled: true,
   });
   const clientTenants = (tenants ?? []).filter((t) => t.kind === "client");
 

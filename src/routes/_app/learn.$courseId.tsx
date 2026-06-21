@@ -25,8 +25,9 @@ function PlayerPage() {
   const fn = useServerFn(getCoursePlayer);
   const markFn = useServerFn(markLessonComplete);
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ["player", courseId], queryFn: () => fn({ data: { courseId } }) as any });
-  const course: any = (data as any)?.course;
+  const query = useQuery({ queryKey: ["player", courseId], queryFn: () => fn({ data: { courseId } }) });
+  const isLoading = query.isLoading;
+  const data: any = query.data;
 
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 

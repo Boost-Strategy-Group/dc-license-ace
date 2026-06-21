@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Repeat2, Timer, Users, Wallet } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Repeat2, Sparkles, Timer, Users, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 

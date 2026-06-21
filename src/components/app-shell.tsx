@@ -41,9 +41,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav className="flex-1 space-y-1 px-3">
-          <SectionLabel>Study</SectionLabel>
-          {studentNav.map((n) => (
+          <SectionLabel>Learn</SectionLabel>
+          {learnNav.map((n) => (
             <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to))}>
+              {n.label}
+            </NavLink>
+          ))}
+          <SectionLabel>LCSW Study</SectionLabel>
+          {studyNav.map((n) => (
+            <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
               {n.label}
             </NavLink>
           ))}

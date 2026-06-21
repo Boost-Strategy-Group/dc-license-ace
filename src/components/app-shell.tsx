@@ -1,12 +1,15 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ClipboardList, GraduationCap, LayoutDashboard, LogOut, Repeat2, Timer, Users } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, LogOut, Repeat2, Timer, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { isAdmin, signOut, user } = useAuth();
+  const { data: superAdminCheck } = useIsSuperAdmin();
+  const isSuper = !!superAdminCheck?.isSuperAdmin;
   const loc = useLocation();
   const studentNav = [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -18,6 +21,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/admin/students", label: "Students", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
+  ];
+  const platformNav = [
+    { to: "/admin/tenants", label: "Tenants", icon: Building2 },
   ];
   return (
     <div className="flex min-h-screen bg-background">
@@ -38,8 +44,18 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
           {isAdmin && (
             <>
-              <SectionLabel>Admin</SectionLabel>
+              <SectionLabel>LCSW Admin</SectionLabel>
               {adminNav.map((n) => (
+                <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
+                  {n.label}
+                </NavLink>
+              ))}
+            </>
+          )}
+          {isSuper && (
+            <>
+              <SectionLabel>Platform</SectionLabel>
+              {platformNav.map((n) => (
                 <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
                   {n.label}
                 </NavLink>
@@ -63,7 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
         </div>
         <div className="md:hidden flex gap-1 overflow-x-auto border-b border-border bg-card px-2 py-2">
-          {[...studentNav, ...(isAdmin ? adminNav : [])].map((n) => {
+          {[...studentNav, ...(isAdmin ? adminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
             const Icon = n.icon;
             const active = loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to));
             return (

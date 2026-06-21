@@ -10,6 +10,7 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Circle, Lock, Video, FileText, ClipboardCheck, Sparkles, FileQuestion } from "lucide-react";
 import { QuizRunner } from "@/components/quiz-runner";
+import { ActivityRunner } from "@/components/activity-runner";
 
 export const Route = createFileRoute("/_app/learn/$courseId")({
   head: () => ({ meta: [{ title: "Course Player · Boost" }] }),

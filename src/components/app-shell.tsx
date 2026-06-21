@@ -30,6 +30,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },
     { to: "/admin/courses", label: "Courses", icon: BookOpen },
     { to: "/admin/ai-factory", label: "AI Course Factory", icon: Sparkles },
+    { to: "/admin/integrations", label: "Integrations", icon: Plug },
   ];
   return (
     <div className="flex min-h-screen bg-background">

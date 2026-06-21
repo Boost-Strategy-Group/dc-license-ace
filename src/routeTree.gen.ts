@@ -13,17 +13,22 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
+import { Route as AppLearnCourseIdRouteImport } from './routes/_app/learn.$courseId'
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
+import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
+import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin.courses.$courseId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -43,6 +48,11 @@ const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppVaultRoute = AppVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppReviewRoute = AppReviewRouteImport.update({
   id: '/review',
@@ -64,6 +74,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCatalogRoute = AppCatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -72,6 +87,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
 const AppSessionIdRoute = AppSessionIdRouteImport.update({
   id: '/session/$id',
   path: '/session/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLearnCourseIdRoute = AppLearnCourseIdRouteImport.update({
+  id: '/learn/$courseId',
+  path: '/learn/$courseId',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminTenantsRoute = AppAdminTenantsRouteImport.update({
@@ -89,6 +109,11 @@ const AppAdminQuestionsRoute = AppAdminQuestionsRouteImport.update({
   path: '/questions',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppAdminCoursesRoute = AppAdminCoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -99,37 +124,52 @@ const AppAdminTenantsTenantIdRoute = AppAdminTenantsTenantIdRouteImport.update({
   path: '/$tenantId',
   getParentRoute: () => AppAdminTenantsRoute,
 } as any)
+const AppAdminCoursesCourseIdRoute = AppAdminCoursesCourseIdRouteImport.update({
+  id: '/$courseId',
+  path: '/$courseId',
+  getParentRoute: () => AppAdminCoursesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AppAdminRouteWithChildren
+  '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AppAdminRouteWithChildren
+  '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
+  '/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/questions': typeof AppAdminQuestionsRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRoutesById {
@@ -138,16 +178,21 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/_app/admin': typeof AppAdminRouteWithChildren
+  '/_app/catalog': typeof AppCatalogRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
+  '/_app/vault': typeof AppVaultRoute
   '/c/$slug': typeof CSlugRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/_app/learn/$courseId': typeof AppLearnCourseIdRoute
   '/_app/session/$id': typeof AppSessionIdRoute
+  '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRoute
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
 }
 export interface FileRouteTypes {
@@ -156,32 +201,42 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/admin'
+    | '/catalog'
     | '/dashboard'
     | '/mock'
     | '/practice'
     | '/review'
+    | '/vault'
     | '/c/$slug'
     | '/admin/analytics'
+    | '/admin/courses'
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
+    | '/learn/$courseId'
     | '/session/$id'
+    | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/admin'
+    | '/catalog'
     | '/dashboard'
     | '/mock'
     | '/practice'
     | '/review'
+    | '/vault'
     | '/c/$slug'
     | '/admin/analytics'
+    | '/admin/courses'
     | '/admin/questions'
     | '/admin/students'
     | '/admin/tenants'
+    | '/learn/$courseId'
     | '/session/$id'
+    | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
   id:
     | '__root__'
@@ -189,16 +244,21 @@ export interface FileRouteTypes {
     | '/_app'
     | '/auth'
     | '/_app/admin'
+    | '/_app/catalog'
     | '/_app/dashboard'
     | '/_app/mock'
     | '/_app/practice'
     | '/_app/review'
+    | '/_app/vault'
     | '/c/$slug'
     | '/_app/admin/analytics'
+    | '/_app/admin/courses'
     | '/_app/admin/questions'
     | '/_app/admin/students'
     | '/_app/admin/tenants'
+    | '/_app/learn/$courseId'
     | '/_app/session/$id'
+    | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
   fileRoutesById: FileRoutesById
 }
@@ -239,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/vault': {
+      id: '/_app/vault'
+      path: '/vault'
+      fullPath: '/vault'
+      preLoaderRoute: typeof AppVaultRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/review': {
       id: '/_app/review'
       path: '/review'
@@ -267,6 +334,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/catalog': {
+      id: '/_app/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof AppCatalogRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/admin': {
       id: '/_app/admin'
       path: '/admin'
@@ -279,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/session/$id'
       fullPath: '/session/$id'
       preLoaderRoute: typeof AppSessionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/learn/$courseId': {
+      id: '/_app/learn/$courseId'
+      path: '/learn/$courseId'
+      fullPath: '/learn/$courseId'
+      preLoaderRoute: typeof AppLearnCourseIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/admin/tenants': {
@@ -302,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminQuestionsRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/courses': {
+      id: '/_app/admin/courses'
+      path: '/courses'
+      fullPath: '/admin/courses'
+      preLoaderRoute: typeof AppAdminCoursesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/analytics': {
       id: '/_app/admin/analytics'
       path: '/analytics'
@@ -316,8 +404,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminTenantsTenantIdRouteImport
       parentRoute: typeof AppAdminTenantsRoute
     }
+    '/_app/admin/courses/$courseId': {
+      id: '/_app/admin/courses/$courseId'
+      path: '/$courseId'
+      fullPath: '/admin/courses/$courseId'
+      preLoaderRoute: typeof AppAdminCoursesCourseIdRouteImport
+      parentRoute: typeof AppAdminCoursesRoute
+    }
   }
 }
+
+interface AppAdminCoursesRouteChildren {
+  AppAdminCoursesCourseIdRoute: typeof AppAdminCoursesCourseIdRoute
+}
+
+const AppAdminCoursesRouteChildren: AppAdminCoursesRouteChildren = {
+  AppAdminCoursesCourseIdRoute: AppAdminCoursesCourseIdRoute,
+}
+
+const AppAdminCoursesRouteWithChildren = AppAdminCoursesRoute._addFileChildren(
+  AppAdminCoursesRouteChildren,
+)
 
 interface AppAdminTenantsRouteChildren {
   AppAdminTenantsTenantIdRoute: typeof AppAdminTenantsTenantIdRoute
@@ -333,6 +440,7 @@ const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
 
 interface AppAdminRouteChildren {
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+  AppAdminCoursesRoute: typeof AppAdminCoursesRouteWithChildren
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
   AppAdminStudentsRoute: typeof AppAdminStudentsRoute
   AppAdminTenantsRoute: typeof AppAdminTenantsRouteWithChildren
@@ -340,6 +448,7 @@ interface AppAdminRouteChildren {
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+  AppAdminCoursesRoute: AppAdminCoursesRouteWithChildren,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,
   AppAdminStudentsRoute: AppAdminStudentsRoute,
   AppAdminTenantsRoute: AppAdminTenantsRouteWithChildren,
@@ -351,19 +460,25 @@ const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
+  AppCatalogRoute: typeof AppCatalogRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
   AppReviewRoute: typeof AppReviewRoute
+  AppVaultRoute: typeof AppVaultRoute
+  AppLearnCourseIdRoute: typeof AppLearnCourseIdRoute
   AppSessionIdRoute: typeof AppSessionIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
+  AppCatalogRoute: AppCatalogRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,
   AppReviewRoute: AppReviewRoute,
+  AppVaultRoute: AppVaultRoute,
+  AppLearnCourseIdRoute: AppLearnCourseIdRoute,
   AppSessionIdRoute: AppSessionIdRoute,
 }
 

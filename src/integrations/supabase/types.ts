@@ -596,6 +596,53 @@ export type Database = {
           },
         ]
       }
+      gosprout_links: {
+        Row: {
+          created_at: string
+          gosprout_program_url: string | null
+          gosprout_username: string | null
+          id: string
+          last_launched_at: string | null
+          notes: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          gosprout_program_url?: string | null
+          gosprout_username?: string | null
+          id?: string
+          last_launched_at?: string | null
+          notes?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          gosprout_program_url?: string | null
+          gosprout_username?: string | null
+          id?: string
+          last_launched_at?: string | null
+          notes?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gosprout_links_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       instructors: {
         Row: {
           bio: string | null

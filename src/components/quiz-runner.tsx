@@ -29,7 +29,7 @@ export function QuizRunner({
     onSuccess: (r) => {
       setResult(r);
       qc.invalidateQueries({ queryKey: ["player"] });
-      toast[r.passed ? "success" : "warning" as any]?.(`Score: ${r.score}%`);
+      if (r.passed) toast.success(`Passed · ${r.score}%`); else toast.warning(`Score ${r.score}% — try again`);
     },
     onError: (e: Error) => toast.error(e.message),
   });

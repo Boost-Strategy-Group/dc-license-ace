@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .from("user_roles")
             .select("role")
             .eq("user_id", s.user.id);
-          setIsAdmin(!!data?.some((r) => r.role === "admin"));
+          setIsAdmin(!!data?.some((r) => r.role === "admin" || r.role === "super_admin"));
         }, 0);
       } else {
         setIsAdmin(false);

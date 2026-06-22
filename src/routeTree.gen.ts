@@ -19,6 +19,7 @@ import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
 import { Route as AppLaunchpadRouteImport } from './routes/_app/launchpad'
+import { Route as AppEmployeesRouteImport } from './routes/_app/employees'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
@@ -90,6 +91,11 @@ const AppMockRoute = AppMockRouteImport.update({
 const AppLaunchpadRoute = AppLaunchpadRouteImport.update({
   id: '/launchpad',
   path: '/launchpad',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEmployeesRoute = AppEmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
+  '/employees': typeof AppEmployeesRoute
   '/launchpad': typeof AppLaunchpadRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
+  '/employees': typeof AppEmployeesRoute
   '/launchpad': typeof AppLaunchpadRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/catalog': typeof AppCatalogRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/employees': typeof AppEmployeesRoute
   '/_app/launchpad': typeof AppLaunchpadRoute
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/dashboard'
+    | '/employees'
     | '/launchpad'
     | '/mock'
     | '/practice'
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/dashboard'
+    | '/employees'
     | '/launchpad'
     | '/mock'
     | '/practice'
@@ -394,6 +405,7 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/catalog'
     | '/_app/dashboard'
+    | '/_app/employees'
     | '/_app/launchpad'
     | '/_app/mock'
     | '/_app/practice'
@@ -503,6 +515,13 @@ declare module '@tanstack/react-router' {
       path: '/launchpad'
       fullPath: '/launchpad'
       preLoaderRoute: typeof AppLaunchpadRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/employees': {
+      id: '/_app/employees'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof AppEmployeesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dashboard': {
@@ -741,6 +760,7 @@ interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
   AppCatalogRoute: typeof AppCatalogRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppEmployeesRoute: typeof AppEmployeesRoute
   AppLaunchpadRoute: typeof AppLaunchpadRoute
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
@@ -758,6 +778,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
   AppCatalogRoute: AppCatalogRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppEmployeesRoute: AppEmployeesRoute,
   AppLaunchpadRoute: AppLaunchpadRoute,
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,

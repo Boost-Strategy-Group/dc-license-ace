@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { listJobDescriptions, createJobDescription, listOrgNodes } from "@/lib/modules.functions";
 import { BoostAgent } from "@/components/boost/BoostAgent";
+import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
 import { Briefcase, Network, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,24 +40,29 @@ function RolesHome() {
   });
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-semibold">Boost!Roles</h1>
-        <p className="text-muted-foreground">Job descriptions and org charts.</p>
-      </header>
+    <div className="mx-auto max-w-6xl space-y-8">
+      <ModulePageHeader
+        icon={Briefcase}
+        name="Boost!Roles"
+        tagline="Define job descriptions and map your org chart."
+        actions={
+          <Button size="sm" onClick={() => setOpen((v) => !v)}>
+            <Plus className="mr-1 h-4 w-4" /> New JD
+          </Button>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4" />
-                <h2 className="font-semibold">Job descriptions</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <div className="grid size-8 place-items-center rounded-md bg-accent/15">
+                <Briefcase className="h-4 w-4 text-accent-foreground" aria-hidden />
               </div>
-              <Button size="sm" onClick={() => setOpen((v) => !v)}><Plus className="h-4 w-4 mr-1" /> New JD</Button>
+              <h2 className="font-semibold">Job descriptions</h2>
             </div>
             {open && (
-              <div className="mb-4 space-y-2 rounded-md border bg-muted/30 p-3">
+              <div className="mb-4 space-y-2 rounded-lg border border-border bg-muted/40 p-3">
                 <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 <Textarea placeholder="Summary" value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
                 <Button size="sm" onClick={() => create.mutate(form)} disabled={!form.title || create.isPending}>
@@ -64,32 +70,52 @@ function RolesHome() {
                 </Button>
               </div>
             )}
-            {jds.isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> :
-              (jds.data?.rows.length ?? 0) === 0 ? <p className="text-sm text-muted-foreground">No job descriptions yet.</p> :
-              <ul className="divide-y">
+            {jds.isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading…</p>
+            ) : (jds.data?.rows.length ?? 0) === 0 ? (
+              <div className="rounded-lg border border-dashed border-border py-10 text-center">
+                <p className="text-sm font-medium">No job descriptions yet</p>
+                <p className="mt-1 text-xs text-muted-foreground">Create your first JD or ask the BOOST! agent to draft one.</p>
+              </div>
+            ) : (
+              <ul className="space-y-1">
                 {jds.data!.rows.map((j: any) => (
-                  <li key={j.id} className="flex items-center justify-between py-2">
-                    <div>
+                  <li key={j.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60">
+                    <div className="min-w-0">
                       <div className="text-sm font-medium">{j.title}</div>
-                      {j.summary && <div className="text-xs text-muted-foreground line-clamp-1">{j.summary}</div>}
+                      {j.summary && <div className="truncate text-xs text-muted-foreground">{j.summary}</div>}
                     </div>
-                    <Badge variant="outline">{j.status}</Badge>
+                    <Badge variant="outline" className="capitalize">{j.status}</Badge>
                   </li>
                 ))}
-              </ul>}
+              </ul>
+            )}
           </Card>
 
           <Card className="p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Network className="h-4 w-4" />
+            <div className="mb-4 flex items-center gap-2">
+              <div className="grid size-8 place-items-center rounded-md bg-accent/15">
+                <Network className="h-4 w-4 text-accent-foreground" aria-hidden />
+              </div>
               <h2 className="font-semibold">Org chart</h2>
             </div>
-            {org.isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> :
-              (org.data?.rows.length ?? 0) === 0 ?
-                <p className="text-sm text-muted-foreground">No nodes yet. Use the BOOST! agent or the employee directory to build one.</p> :
-                <ul className="text-sm space-y-1">
-                  {org.data!.rows.map((n: any) => <li key={n.id} className="ml-4">• {n.title}</li>)}
-                </ul>}
+            {org.isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading…</p>
+            ) : (org.data?.rows.length ?? 0) === 0 ? (
+              <div className="rounded-lg border border-dashed border-border py-10 text-center">
+                <p className="text-sm font-medium">No org nodes yet</p>
+                <p className="mt-1 text-xs text-muted-foreground">Use the BOOST! agent or the employee directory to build one.</p>
+              </div>
+            ) : (
+              <ul className="space-y-1 text-sm">
+                {org.data!.rows.map((n: any) => (
+                  <li key={n.id} className="flex items-center gap-2 rounded-md px-3 py-1.5">
+                    <span className="size-1.5 rounded-full bg-accent" aria-hidden />
+                    {n.title}
+                  </li>
+                ))}
+              </ul>
+            )}
           </Card>
         </div>
 

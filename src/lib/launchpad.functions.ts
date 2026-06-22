@@ -72,7 +72,7 @@ export const getLaunchpad = createServerFn({ method: "GET" })
 
     return {
       tenant: tenantRow
-        ? { id: tenantRow.id, name: tenantRow.name, logoUrl: tenantRow.logo_asset_url }
+        ? { id: tenantRow.id, name: tenantRow.name, logoUrl: tenantRow.logo_url }
         : null,
       tiles,
     };

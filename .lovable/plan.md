@@ -20,15 +20,13 @@ Phase-by-phase. Each phase ships end-to-end before the next starts. Phases 1–2
 
 ---
 
-## Phase 3 — Module Shells (CURRENT)
-Every active tile lands on a real, branded module home.
-1. **Boost!Roles** — Job Descriptions list + Org Chart placeholder.
-2. **Boost!Perform** — Goals, Reviews, 1:1s sections; admin goal-category config.
-3. **Boost!Pulse** — Active surveys + cadence (weekly/monthly/quarterly) + participant picker.
-4. **Boost!Learn** — Tenant-scoped published courses from `course_publications`.
-5. Shared `/employees` directory (CRUD + CSV import stub).
+## Phase 3 — Module Shells (DONE)
+Roles, Perform, Pulse, Learn shells + shared `/employees` directory shipped.
 
-## Phase 4 — BOOST! Implementation Agent (NEW — high priority)
+## Phase 5 — Publishing & Catalog (CURRENT)
+SuperAdmin publish picker, `course_publications` writers, tenant-scoped course lists, BBS push via stub.
+
+## Phase 4 — BOOST! Implementation Agent (DONE)
 Animated assistant named **BOOST!** that takes clients through a per-module setup wizard, answers questions, and configures the system. Scope: **Roles, Perform, Pulse only.** Training and Apprenticeship questions are always routed to BSG support.
 
 Behavior:

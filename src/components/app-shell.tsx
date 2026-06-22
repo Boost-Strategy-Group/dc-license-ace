@@ -34,6 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/admin/students", label: "Students", icon: Users },
     { to: "/admin/student-management", label: "Student management", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
+    { to: "/admin/state", label: "State training", icon: ShieldCheck },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
   ];
   const platformNav = [

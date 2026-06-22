@@ -144,9 +144,13 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="grid h-9 w-9 place-items-center rounded-md bg-primary font-display font-semibold text-primary-foreground">
-              B
-            </div>
+            <img
+              src="/boost-logo.png"
+              alt="Boost Strategy Group"
+              className="h-10 w-auto"
+              width={40}
+              height={40}
+            />
             <div className="leading-tight">
               <div className="font-display text-lg font-semibold">BOOST</div>
               <div className="text-xs text-muted-foreground">Learning &amp; Credentialing Platform</div>
@@ -189,7 +193,7 @@ function Landing() {
             <h1 className="max-w-3xl font-display text-5xl font-semibold leading-[1.04] tracking-tight text-balance md:text-6xl">
               Four modules. One platform.
               <br />
-              <span className="text-accent">A workforce that performs.</span>
+              <span className="brand-text-gradient">A workforce that performs.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-pretty">
               Boost!Roles, Boost!Perform, Boost!Pulse, and Boost!Learn — a unified system for role
@@ -339,12 +343,12 @@ function Landing() {
         </section>
 
         {/* CTA */}
-        <section className="border-t border-border bg-primary text-primary-foreground">
+        <section className="brand-gradient border-t border-border text-primary-foreground">
           <div className="mx-auto max-w-6xl px-6 py-20 text-center">
             <h2 className="font-display text-3xl font-semibold tracking-tight text-balance md:text-4xl">
               Ready to see BOOST in your brand?
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-primary-foreground/80 text-pretty">
+            <p className="mx-auto mt-3 max-w-xl text-primary-foreground/90 text-pretty">
               Sign in or request a tenant to get started with role design, performance, engagement,
               and credentialed learning.
             </p>

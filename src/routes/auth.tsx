@@ -70,13 +70,15 @@ function AuthPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden flex-col justify-between overflow-hidden bg-primary p-12 text-primary-foreground lg:flex">
+      <aside className="brand-gradient relative hidden flex-col justify-between overflow-hidden p-12 text-primary-foreground lg:flex">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-accent/20 blur-3xl"
+          className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-primary-foreground/10 blur-3xl"
         />
         <div className="relative flex items-center gap-3">
-          <div className="grid size-11 place-items-center rounded-md bg-accent font-display text-xl font-semibold text-accent-foreground">B</div>
+          <div className="grid size-11 place-items-center rounded-md bg-primary-foreground/95 p-1.5">
+            <img src="/boost-logo.png" alt="Boost Strategy Group" className="h-full w-full object-contain" width={44} height={44} />
+          </div>
           <div className="leading-tight">
             <div className="font-display text-lg font-semibold">BOOST</div>
             <div className="text-xs uppercase tracking-[0.2em] text-primary-foreground/70">Strategy Group</div>
@@ -111,7 +113,7 @@ function AuthPage() {
       <div className="flex items-center justify-center bg-background px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center lg:hidden">
-            <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-md bg-primary text-primary-foreground font-display font-semibold">B</div>
+            <img src="/boost-logo.png" alt="Boost Strategy Group" className="mx-auto mb-3 h-12 w-auto" width={48} height={48} />
             <h1 className="font-display text-2xl font-semibold">BOOST Learning</h1>
             <p className="text-sm text-muted-foreground">Sign in to your launchpad.</p>
           </div>

@@ -33,11 +33,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   ];
   const adminNav = [
     { to: "/admin/students", label: "Students", icon: Users },
-    { to: "/admin/student-management", label: "Student management", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
     { to: "/admin/state", label: "State training", icon: ShieldCheck },
     { to: "/admin/apprenticeship", label: "Apprenticeship & RTI", icon: GraduationCap },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
+  ];
+  const tenantAdminNav = [
+    { to: "/admin/student-management", label: "Student management", icon: Users },
   ];
   const platformNav = [
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },

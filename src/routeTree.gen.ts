@@ -9,12 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as ApprovalsTokenRouteImport } from './routes/approvals.$token'
 import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
@@ -48,6 +50,11 @@ import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin
 import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
 import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -75,6 +82,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
 const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovalsTokenRoute = ApprovalsTokenRouteImport.update({
+  id: '/approvals/$token',
+  path: '/approvals/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppVaultRoute = AppVaultRouteImport.update({
@@ -248,6 +260,7 @@ const AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
@@ -257,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -287,6 +301,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
@@ -296,6 +311,7 @@ export interface FileRoutesByTo {
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -328,6 +344,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/catalog': typeof AppCatalogRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -337,6 +354,7 @@ export interface FileRoutesById {
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -369,6 +387,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/unsubscribe'
     | '/admin'
     | '/catalog'
     | '/dashboard'
@@ -378,6 +397,7 @@ export interface FileRouteTypes {
     | '/practice'
     | '/review'
     | '/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
     | '/email/unsubscribe'
@@ -408,6 +428,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/unsubscribe'
     | '/admin'
     | '/catalog'
     | '/dashboard'
@@ -417,6 +438,7 @@ export interface FileRouteTypes {
     | '/practice'
     | '/review'
     | '/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
     | '/email/unsubscribe'
@@ -448,6 +470,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/auth'
+    | '/unsubscribe'
     | '/_app/admin'
     | '/_app/catalog'
     | '/_app/dashboard'
@@ -457,6 +480,7 @@ export interface FileRouteTypes {
     | '/_app/practice'
     | '/_app/review'
     | '/_app/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
     | '/email/unsubscribe'
@@ -489,6 +513,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
+  ApprovalsTokenRoute: typeof ApprovalsTokenRoute
   CSlugRoute: typeof CSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -501,6 +527,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -541,6 +574,13 @@ declare module '@tanstack/react-router' {
       path: '/c/$slug'
       fullPath: '/c/$slug'
       preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approvals/$token': {
+      id: '/approvals/$token'
+      path: '/approvals/$token'
+      fullPath: '/approvals/$token'
+      preLoaderRoute: typeof ApprovalsTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/vault': {
@@ -880,6 +920,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
+  ApprovalsTokenRoute: ApprovalsTokenRoute,
   CSlugRoute: CSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,

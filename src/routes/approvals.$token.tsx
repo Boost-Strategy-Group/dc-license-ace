@@ -6,7 +6,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { useServerFn } from "@tanstack/react-start";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 const confirmByToken = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -9,6 +9,8 @@ type AuthCtx = {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  roles: string[];
+  canManageRoles: boolean;
   signOut: () => Promise<void>;
 };
 
@@ -17,13 +19,19 @@ const Ctx = createContext<AuthCtx>({
   session: null,
   loading: true,
   isAdmin: false,
+  roles: [],
+  canManageRoles: false,
   signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
+  const isAdmin = roles.some((r) => r === "admin" || r === "super_admin");
+  const canManageRoles = roles.some((r) =>
+    ["admin", "super_admin", "tenant_admin", "instructor"].includes(r),
+  );
   const router = useRouter();
   const qc = useQueryClient();
 
@@ -32,16 +40,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED" && event !== "INITIAL_SESSION") return;
       setSession(s);
       if (s?.user) {
-        // role lookup (don't block render)
         setTimeout(async () => {
           const { data } = await supabase
             .from("user_roles")
             .select("role")
             .eq("user_id", s.user.id);
-          setIsAdmin(!!data?.some((r) => r.role === "admin" || r.role === "super_admin"));
+          setRoles((data ?? []).map((r) => r.role as string));
         }, 0);
       } else {
-        setIsAdmin(false);
+        setRoles([]);
       }
       if (event !== "INITIAL_SESSION") {
         router.invalidate();
@@ -64,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ user: session?.user ?? null, session, loading, isAdmin, signOut }}>
+    <Ctx.Provider value={{ user: session?.user ?? null, session, loading, isAdmin, roles, canManageRoles, signOut }}>
       {children}
     </Ctx.Provider>
   );

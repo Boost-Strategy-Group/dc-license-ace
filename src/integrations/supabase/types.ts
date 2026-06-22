@@ -154,6 +154,41 @@ export type Database = {
           },
         ]
       }
+      apprenticeship_programs: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          required_rti_hours: number
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          required_rti_hours?: number
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          required_rti_hours?: number
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "apprenticeship_programs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_items: {
         Row: {
           assessment_id: string
@@ -259,6 +294,36 @@ export type Database = {
           },
         ]
       }
+      boost_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          name: string
+          tagline: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          name: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          name?: string
+          tagline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       course_needs_assessments: {
         Row: {
           citations: Json
@@ -300,6 +365,53 @@ export type Database = {
           },
         ]
       }
+      course_publications: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          published_at: string
+          published_by: string | null
+          source: string
+          status: string
+          target_id: string | null
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          published_at?: string
+          published_by?: string | null
+          source?: string
+          status?: string
+          target_id?: string | null
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          published_at?: string
+          published_by?: string | null
+          source?: string
+          status?: string
+          target_id?: string | null
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_publications_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           audience: string | null
@@ -319,10 +431,12 @@ export type Database = {
           language: string
           price_cents: number
           requires_needs_assessment: boolean
+          rti_hours: number
           slug: string
+          source: string
           status: string
           stripe_price_id: string | null
-          tenant_id: string
+          tenant_id: string | null
           title: string
           updated_at: string
         }
@@ -344,10 +458,12 @@ export type Database = {
           language?: string
           price_cents?: number
           requires_needs_assessment?: boolean
+          rti_hours?: number
           slug: string
+          source?: string
           status?: string
           stripe_price_id?: string | null
-          tenant_id: string
+          tenant_id?: string | null
           title: string
           updated_at?: string
         }
@@ -369,10 +485,12 @@ export type Database = {
           language?: string
           price_cents?: number
           requires_needs_assessment?: boolean
+          rti_hours?: number
           slug?: string
+          source?: string
           status?: string
           stripe_price_id?: string | null
-          tenant_id?: string
+          tenant_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -386,6 +504,57 @@ export type Database = {
           },
           {
             foreignKeyName: "courses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eligibility_screenings: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          id: string
+          public_assistance: boolean
+          qualified: boolean
+          tenant_id: string
+          underemployed: boolean
+          unemployed: boolean
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          public_assistance?: boolean
+          qualified?: boolean
+          tenant_id: string
+          underemployed?: boolean
+          unemployed?: boolean
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          public_assistance?: boolean
+          qualified?: boolean
+          tenant_id?: string
+          underemployed?: boolean
+          unemployed?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eligibility_screenings_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eligibility_screenings_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -479,6 +648,56 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
+      }
+      employees: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          id: string
+          job_title: string | null
+          manager_user_id: string | null
+          tenant_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          job_title?: string | null
+          manager_user_id?: string | null
+          tenant_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          job_title?: string | null
+          manager_user_id?: string | null
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       enrollments: {
         Row: {
@@ -721,6 +940,51 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "integration_accounts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learners: {
+        Row: {
+          apprenticeship_program_id: string | null
+          created_at: string
+          id: string
+          is_apprentice: boolean
+          tenant_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          apprenticeship_program_id?: string | null
+          created_at?: string
+          id?: string
+          is_apprentice?: boolean
+          tenant_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          apprenticeship_program_id?: string | null
+          created_at?: string
+          id?: string
+          is_apprentice?: boolean
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learners_apprenticeship_program_id_fkey"
+            columns: ["apprenticeship_program_id"]
+            isOneToOne: false
+            referencedRelation: "apprenticeship_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learners_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -1134,6 +1398,48 @@ export type Database = {
           },
         ]
       }
+      rti_completions: {
+        Row: {
+          completed_at: string
+          course_id: string
+          created_at: string
+          id: string
+          learner_id: string
+          rti_hours: number
+        }
+        Insert: {
+          completed_at?: string
+          course_id: string
+          created_at?: string
+          id?: string
+          learner_id: string
+          rti_hours?: number
+        }
+        Update: {
+          completed_at?: string
+          course_id?: string
+          created_at?: string
+          id?: string
+          learner_id?: string
+          rti_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rti_completions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rti_completions_learner_id_fkey"
+            columns: ["learner_id"]
+            isOneToOne: false
+            referencedRelation: "learners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_responses: {
         Row: {
           answered_at: string
@@ -1178,6 +1484,136 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      state_appointments: {
+        Row: {
+          created_at: string
+          eligibility_id: string
+          id: string
+          scheduled_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          eligibility_id: string
+          id?: string
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          eligibility_id?: string
+          id?: string
+          scheduled_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_appointments_eligibility_id_fkey"
+            columns: ["eligibility_id"]
+            isOneToOne: false
+            referencedRelation: "eligibility_screenings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      state_authorizations: {
+        Row: {
+          created_at: string
+          etpl_status: string | null
+          funding_notes: string | null
+          id: string
+          occupation: string
+          state_code: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          etpl_status?: string | null
+          funding_notes?: string | null
+          id?: string
+          occupation: string
+          state_code: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          etpl_status?: string | null
+          funding_notes?: string | null
+          id?: string
+          occupation?: string
+          state_code?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_authorizations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      state_vouchers: {
+        Row: {
+          code: string
+          course_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          redeemed_at: string | null
+          redeemed_by: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_vouchers_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "state_vouchers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -1360,6 +1796,48 @@ export type Database = {
           },
         ]
       }
+      tenant_boost_modules: {
+        Row: {
+          boost_module_id: string
+          created_at: string
+          id: string
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          boost_module_id: string
+          created_at?: string
+          id?: string
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          boost_module_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_boost_modules_boost_module_id_fkey"
+            columns: ["boost_module_id"]
+            isOneToOne: false
+            referencedRelation: "boost_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_boost_modules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_members: {
         Row: {
           created_at: string
@@ -1400,11 +1878,14 @@ export type Database = {
           custom_domain: string | null
           id: string
           kind: string
+          logo_asset_url: string | null
           logo_url: string | null
           name: string
           powered_by_boost_footer: boolean
+          primary_color: string | null
           settings: Json
           slug: string
+          tenant_type: string
           updated_at: string
           welcome_copy: string | null
         }
@@ -1415,11 +1896,14 @@ export type Database = {
           custom_domain?: string | null
           id?: string
           kind?: string
+          logo_asset_url?: string | null
           logo_url?: string | null
           name: string
           powered_by_boost_footer?: boolean
+          primary_color?: string | null
           settings?: Json
           slug: string
+          tenant_type?: string
           updated_at?: string
           welcome_copy?: string | null
         }
@@ -1430,11 +1914,14 @@ export type Database = {
           custom_domain?: string | null
           id?: string
           kind?: string
+          logo_asset_url?: string | null
           logo_url?: string | null
           name?: string
           powered_by_boost_footer?: boolean
+          primary_color?: string | null
           settings?: Json
           slug?: string
+          tenant_type?: string
           updated_at?: string
           welcome_copy?: string | null
         }

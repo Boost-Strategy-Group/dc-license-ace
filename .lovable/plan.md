@@ -1,53 +1,76 @@
-## GoSprout Launchpad (lightweight handoff, not a full integration)
+# BoostMyWorkforce v3 — Phased Implementation Plan
 
-GoSprout doesn't publish a public API or a standard SSO/SAML/OIDC endpoint we can self-configure. Since the goal is "learners click a button in BOOST and land in GoSprout to log their RTI/apprenticeship hours," we'll build a **launchpad tile** rather than a data integration. If GoSprout later confirms SAML or OAuth support, we layer real SSO on top of the same UI.
+Phase-by-phase. Each phase ships end-to-end before the next starts. Phases 1–2 are done; we resume at Phase 3.
 
-### What gets built
+---
 
-1. **`gosprout_links` table** (per-learner)
-   - `user_id`, `tenant_id`, `gosprout_username` (optional), `gosprout_program_url` (the deep link the org gives each apprentice), `status` (`invited` / `active` / `inactive`), `last_launched_at`
-   - RLS: learner reads own row; tenant admins manage rows in their tenant; super_admin all
-   - GRANTs for `authenticated` + `service_role`
+## Phase 1 — Foundation (DONE)
+- DB restructure: `boost_modules`, `tenant_boost_modules`, `course_publications`, `apprenticeship_programs`, `learners`, `rti_completions`, `employees`, state-training tables, `tenants` branding/domain columns.
+- Seeded four modules: **Boost!Roles, Boost!Perform, Boost!Pulse, Boost!Learn**.
+- Auth + landing rebrand to "BOOST Learning & Credentialing".
+- Launchpad + ModuleTile reading per-tenant entitlements.
+- Integration stubs: BBS Community Builder Pro, TalentLMS.
 
-2. **Tenant-level config** on existing `tenants` table (or new `tenant_gosprout_config`):
-   - `gosprout_enabled`, `gosprout_default_login_url` (e.g. `https://app.gosprout.com/login`), `gosprout_org_slug`, `instructions_md`
+## Phase 2 — Tenant & Student Admin (DONE)
+- Tenants list + create wizard with branding.
+- Tenant detail: branding, members, invites, GoSprout panel.
+- Per-tenant module entitlements (active / coming_soon / available).
+- Student Management: pick tenant, enroll by email, toggle per-learner module access.
+- Test-user quick login + auto-role-grant trigger for `jackie@boost.test`, `admin@boost.test`, `learner@boost.test`.
 
-3. **Learner UI — "Apprenticeship Tools" card** on the learner dashboard and on any course flagged `is_apprenticeship_rti = true`:
-   - Shows GoSprout logo + "Log your apprenticeship hours in GoSprout"
-   - Primary button → opens `gosprout_program_url` (or default login URL) in a new tab
-   - Records `last_launched_at` via a server fn so admins can see engagement
-   - Empty state: "Your sponsor hasn't linked you to GoSprout yet"
+---
 
-4. **Admin UI — "GoSprout" tab in tenant admin**:
-   - Toggle enable/disable
-   - Paste org login URL + instructions
-   - Roster table: for each apprentice, set their GoSprout username + personal program link, mark active/inactive
-   - CSV import for bulk roster mapping
+## Phase 3 — Module Shells (CURRENT)
+Every active tile lands on a real, branded module home.
+1. **Boost!Roles** — Job Descriptions list + Org Chart placeholder.
+2. **Boost!Perform** — Goals, Reviews, 1:1s sections; admin goal-category config.
+3. **Boost!Pulse** — Active surveys + cadence (weekly/monthly/quarterly) + participant picker.
+4. **Boost!Learn** — Tenant-scoped published courses from `course_publications`.
+5. Shared `/employees` directory (CRUD + CSV import stub).
 
-5. **RTI completion hook (manual, no API)**:
-   - When a learner completes a course marked as RTI, we surface a "Report this to GoSprout" reminder + a copy-to-clipboard summary (course name, CEUs, hours, completion date, certificate URL) the learner or mentor pastes into GoSprout. This is the bridge until a real API exists.
+## Phase 4 — BOOST! Implementation Agent (NEW — high priority)
+Animated assistant named **BOOST!** that takes clients through a per-module setup wizard, answers questions, and configures the system. Scope: **Roles, Perform, Pulse only.** Training and Apprenticeship questions are always routed to BSG support.
 
-6. **Future-ready adapter stub** (`src/lib/integrations/gosprout.ts`):
-   - Empty `pushRtiCompletion()` / `syncRoster()` functions behind an `integration_mode: 'launchpad' | 'api'` flag — so when you get API credentials we swap implementations without touching UI.
+Behavior:
+- Per-module setup wizards (Roles, Perform, Pulse): conversational, collects inputs, writes config to the DB.
+- Uses AI to draft artifacts (job descriptions, goal/performance-plan structures, survey question sets) and stages them as **drafts** — never auto-published.
+- For config requests → executes via server functions.
+- For "change beyond config" requests → offers a workaround **or** opens a support ticket to BSG.
+- For Learn/Apprenticeship requests → always routes to BSG support ticket.
+- **Approval gate**: before any performance plan, engagement survey, or goal program goes live, BOOST! sends a verification email to the requesting admin with a one-click "Confirm & Publish" link. Approval, who approved, and timestamp are written to an audit log.
+- Animated avatar (lottie or CSS) with idle / thinking / success / blocked states.
 
-### What this is NOT (call out explicitly)
-- Not true SSO — learners still sign in to GoSprout with their GoSprout credentials. True SSO requires GoSprout to enable SAML/OIDC for your org; we'll wire it the same day they do.
-- No automatic hours/competency sync.
-- No webhook from GoSprout back to BOOST.
+Pieces:
+- `boost_agent_sessions`, `boost_agent_messages`, `boost_agent_actions`, `boost_agent_approvals` tables.
+- AI SDK chat server route under `src/routes/api/boost-agent.ts` using Lovable AI (`google/gemini-3-flash-preview`).
+- Tools: `propose_jd`, `propose_goal_plan`, `propose_survey`, `stage_publish`, `request_approval`, `open_support_ticket`.
+- Approval email via Lovable Emails with magic-token confirm route.
+- UI: floating BOOST! launcher on every module home; full-screen wizard mode for first-run setup.
 
-### Next step on your side
-Email GoSprout support and ask three questions:
-1. Do you offer SAML 2.0 or OIDC SSO on our plan?
-2. Do you offer a REST API for roster + completions + hours?
-3. Can you provide per-learner deep-link/invite URLs we can store?
+## Phase 5 — Publishing & Catalog
+SuperAdmin publish picker, `course_publications` writers, tenant-scoped course lists, BBS push via stub.
 
-Their answers determine whether we keep this as a launchpad or upgrade to bi-directional sync later.
+## Phase 6 — State Training Vertical
+Eligibility screener, vouchers + Stripe copay, scheduler, authorizations queue.
 
-### Files touched
-- `supabase/migrations/<ts>_gosprout_launchpad.sql` (new table, grants, RLS, tenant columns)
-- `src/lib/gosprout.functions.ts` (record launch, upsert link, list roster)
-- `src/lib/integrations/gosprout.ts` (adapter stub)
-- `src/components/learner/GoSproutCard.tsx`
-- `src/components/learner/RtiReportReminder.tsx`
-- `src/routes/_authenticated/admin/tenants.$tenantId.gosprout.tsx`
-- Learner dashboard + course detail: mount the card when tenant has GoSprout enabled
+## Phase 7 — Apprenticeship / RTI Reporting
+Per-learner RTI dashboard, GoSprout CSV export + reminder, mentor view.
+
+## Phase 8 — Polish & Public Marketing
+- Marketing homepage: four-modules pitch.
+- **Do NOT publish client logos or named client lists publicly.** Use generic industry/vertical descriptors only.
+- SEO metadata per route, OG images.
+- Empty states, loading skeletons, mobile pass.
+- Publish.
+
+---
+
+## Out of Scope (defer)
+- True SSO with GoSprout / TalentLMS.
+- Multi-tenant switcher for users in >1 tenant.
+- HeyGen avatar narration inside module pages.
+- BOOST! agent for Learn or Apprenticeship modules (always BSG support).
+
+---
+
+**Next action:** Start Phase 3 (module shells) then Phase 4 (BOOST! agent) — both can begin in parallel since the agent UI hooks into the module shells.

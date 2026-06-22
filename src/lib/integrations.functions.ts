@@ -86,6 +86,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         .maybeSingle();
       if (error) throw new Error(error.message);
       if (!course) throw new Error("Course not found");
+      if (!course.tenant_id) throw new Error("Course is not assigned to a tenant");
       if (course.status !== "published") throw new Error("Course is not published");
       if (!course.price_cents || course.price_cents <= 0)
         throw new Error("Course is free — enroll directly.");

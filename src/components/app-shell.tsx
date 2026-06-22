@@ -89,6 +89,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               ))}
             </>
           )}
+          {canManageStudents && (
+            <>
+              <SectionLabel>Client Admin</SectionLabel>
+              {tenantAdminNav.map((n) => (
+                <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
+                  {n.label}
+                </NavLink>
+              ))}
+            </>
+          )}
           {isSuper && (
             <>
               <SectionLabel>Platform</SectionLabel>

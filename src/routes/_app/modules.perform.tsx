@@ -108,10 +108,12 @@ function PerformHome() {
           </Card>
         </div>
 
-        <BoostAgent
-          moduleKey="perform"
-          intro="Hi — I'm BOOST! I can set up your goal categories and draft a review cycle. Before any cycle goes live, you'll get an email to confirm. Where do you want to start?"
-        />
+        {canManageRoles && (
+          <BoostAgent
+            moduleKey="perform"
+            intro="Hi — I'm BOOST! I can set up your goal categories and draft a review cycle. Before any cycle goes live, you'll get an email to confirm. Where do you want to start?"
+          />
+        )}
       </div>
     </div>
   );

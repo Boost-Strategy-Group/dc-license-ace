@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { isAdmin, signOut, user } = useAuth();
+  const { isAdmin, canManageStudents, signOut, user } = useAuth();
   const { data: superAdminCheck } = useIsSuperAdmin();
   const isSuper = !!superAdminCheck?.isSuperAdmin;
   const loc = useLocation();

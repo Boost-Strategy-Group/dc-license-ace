@@ -1838,6 +1838,45 @@ export type Database = {
           },
         ]
       }
+      tenant_member_modules: {
+        Row: {
+          assigned_by: string | null
+          boost_module_id: string
+          created_at: string
+          id: string
+          tenant_member_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          boost_module_id: string
+          created_at?: string
+          id?: string
+          tenant_member_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          boost_module_id?: string
+          created_at?: string
+          id?: string
+          tenant_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_member_modules_boost_module_id_fkey"
+            columns: ["boost_module_id"]
+            isOneToOne: false
+            referencedRelation: "boost_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_member_modules_tenant_member_id_fkey"
+            columns: ["tenant_member_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_members: {
         Row: {
           created_at: string

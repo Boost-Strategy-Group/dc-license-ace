@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
         </div>
         <div className="md:hidden flex gap-1 overflow-x-auto border-b border-border bg-card px-2 py-2">
-          {[...learnNav, ...boostNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
+          {[...learnNav, ...boostNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(canManageStudents ? tenantAdminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
             const Icon = n.icon;
             const active = loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to));
             return (

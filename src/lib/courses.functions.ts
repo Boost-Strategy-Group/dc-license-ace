@@ -242,6 +242,7 @@ export const enrollInCourse = createServerFn({ method: "POST" })
       .maybeSingle();
     if (cErr) throw new Error(cErr.message);
     if (!course) throw new Error("Course not found");
+    if (!course.tenant_id) throw new Error("Course is not assigned to a tenant");
 
     const { data: row, error } = await context.supabase
       .from("enrollments")

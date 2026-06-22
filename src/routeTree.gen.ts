@@ -18,10 +18,15 @@ import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
+import { Route as AppLaunchpadRouteImport } from './routes/_app/launchpad'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
+import { Route as AppModulesRolesRouteImport } from './routes/_app/modules.roles'
+import { Route as AppModulesPulseRouteImport } from './routes/_app/modules.pulse'
+import { Route as AppModulesPerformRouteImport } from './routes/_app/modules.perform'
+import { Route as AppModulesLearnRouteImport } from './routes/_app/modules.learn'
 import { Route as AppLearnCourseIdRouteImport } from './routes/_app/learn.$courseId'
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
@@ -81,6 +86,11 @@ const AppMockRoute = AppMockRouteImport.update({
   path: '/mock',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLaunchpadRoute = AppLaunchpadRouteImport.update({
+  id: '/launchpad',
+  path: '/launchpad',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -99,6 +109,26 @@ const AppAdminRoute = AppAdminRouteImport.update({
 const AppSessionIdRoute = AppSessionIdRouteImport.update({
   id: '/session/$id',
   path: '/session/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModulesRolesRoute = AppModulesRolesRouteImport.update({
+  id: '/modules/roles',
+  path: '/modules/roles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModulesPulseRoute = AppModulesPulseRouteImport.update({
+  id: '/modules/pulse',
+  path: '/modules/pulse',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModulesPerformRoute = AppModulesPerformRouteImport.update({
+  id: '/modules/perform',
+  path: '/modules/perform',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModulesLearnRoute = AppModulesLearnRouteImport.update({
+  id: '/modules/learn',
+  path: '/modules/learn',
   getParentRoute: () => AppRoute,
 } as any)
 const AppLearnCourseIdRoute = AppLearnCourseIdRouteImport.update({
@@ -182,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
+  '/launchpad': typeof AppLaunchpadRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
@@ -196,6 +227,10 @@ export interface FileRoutesByFullPath {
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/learn/$courseId': typeof AppLearnCourseIdRoute
+  '/modules/learn': typeof AppModulesLearnRoute
+  '/modules/perform': typeof AppModulesPerformRoute
+  '/modules/pulse': typeof AppModulesPulseRoute
+  '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -210,6 +245,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
+  '/launchpad': typeof AppLaunchpadRoute
   '/mock': typeof AppMockRoute
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
@@ -224,6 +260,10 @@ export interface FileRoutesByTo {
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/learn/$courseId': typeof AppLearnCourseIdRoute
+  '/modules/learn': typeof AppModulesLearnRoute
+  '/modules/perform': typeof AppModulesPerformRoute
+  '/modules/pulse': typeof AppModulesPulseRoute
+  '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -240,6 +280,7 @@ export interface FileRoutesById {
   '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/catalog': typeof AppCatalogRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/launchpad': typeof AppLaunchpadRoute
   '/_app/mock': typeof AppMockRoute
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
@@ -254,6 +295,10 @@ export interface FileRoutesById {
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
   '/_app/learn/$courseId': typeof AppLearnCourseIdRoute
+  '/_app/modules/learn': typeof AppModulesLearnRoute
+  '/_app/modules/perform': typeof AppModulesPerformRoute
+  '/_app/modules/pulse': typeof AppModulesPulseRoute
+  '/_app/modules/roles': typeof AppModulesRolesRoute
   '/_app/session/$id': typeof AppSessionIdRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -270,6 +315,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/dashboard'
+    | '/launchpad'
     | '/mock'
     | '/practice'
     | '/review'
@@ -284,6 +330,10 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/admin/tenants'
     | '/learn/$courseId'
+    | '/modules/learn'
+    | '/modules/perform'
+    | '/modules/pulse'
+    | '/modules/roles'
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -298,6 +348,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/catalog'
     | '/dashboard'
+    | '/launchpad'
     | '/mock'
     | '/practice'
     | '/review'
@@ -312,6 +363,10 @@ export interface FileRouteTypes {
     | '/admin/students'
     | '/admin/tenants'
     | '/learn/$courseId'
+    | '/modules/learn'
+    | '/modules/perform'
+    | '/modules/pulse'
+    | '/modules/roles'
     | '/session/$id'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -327,6 +382,7 @@ export interface FileRouteTypes {
     | '/_app/admin'
     | '/_app/catalog'
     | '/_app/dashboard'
+    | '/_app/launchpad'
     | '/_app/mock'
     | '/_app/practice'
     | '/_app/review'
@@ -341,6 +397,10 @@ export interface FileRouteTypes {
     | '/_app/admin/students'
     | '/_app/admin/tenants'
     | '/_app/learn/$courseId'
+    | '/_app/modules/learn'
+    | '/_app/modules/perform'
+    | '/_app/modules/pulse'
+    | '/_app/modules/roles'
     | '/_app/session/$id'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
@@ -425,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMockRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/launchpad': {
+      id: '/_app/launchpad'
+      path: '/launchpad'
+      fullPath: '/launchpad'
+      preLoaderRoute: typeof AppLaunchpadRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -451,6 +518,34 @@ declare module '@tanstack/react-router' {
       path: '/session/$id'
       fullPath: '/session/$id'
       preLoaderRoute: typeof AppSessionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/modules/roles': {
+      id: '/_app/modules/roles'
+      path: '/modules/roles'
+      fullPath: '/modules/roles'
+      preLoaderRoute: typeof AppModulesRolesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/modules/pulse': {
+      id: '/_app/modules/pulse'
+      path: '/modules/pulse'
+      fullPath: '/modules/pulse'
+      preLoaderRoute: typeof AppModulesPulseRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/modules/perform': {
+      id: '/_app/modules/perform'
+      path: '/modules/perform'
+      fullPath: '/modules/perform'
+      preLoaderRoute: typeof AppModulesPerformRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/modules/learn': {
+      id: '/_app/modules/learn'
+      path: '/modules/learn'
+      fullPath: '/modules/learn'
+      preLoaderRoute: typeof AppModulesLearnRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/learn/$courseId': {
@@ -624,11 +719,16 @@ interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
   AppCatalogRoute: typeof AppCatalogRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppLaunchpadRoute: typeof AppLaunchpadRoute
   AppMockRoute: typeof AppMockRoute
   AppPracticeRoute: typeof AppPracticeRoute
   AppReviewRoute: typeof AppReviewRoute
   AppVaultRoute: typeof AppVaultRoute
   AppLearnCourseIdRoute: typeof AppLearnCourseIdRoute
+  AppModulesLearnRoute: typeof AppModulesLearnRoute
+  AppModulesPerformRoute: typeof AppModulesPerformRoute
+  AppModulesPulseRoute: typeof AppModulesPulseRoute
+  AppModulesRolesRoute: typeof AppModulesRolesRoute
   AppSessionIdRoute: typeof AppSessionIdRoute
 }
 
@@ -636,11 +736,16 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
   AppCatalogRoute: AppCatalogRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppLaunchpadRoute: AppLaunchpadRoute,
   AppMockRoute: AppMockRoute,
   AppPracticeRoute: AppPracticeRoute,
   AppReviewRoute: AppReviewRoute,
   AppVaultRoute: AppVaultRoute,
   AppLearnCourseIdRoute: AppLearnCourseIdRoute,
+  AppModulesLearnRoute: AppModulesLearnRoute,
+  AppModulesPerformRoute: AppModulesPerformRoute,
+  AppModulesPulseRoute: AppModulesPulseRoute,
+  AppModulesRolesRoute: AppModulesRolesRoute,
   AppSessionIdRoute: AppSessionIdRoute,
 }
 
@@ -658,13 +763,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listTenants, listTenantMembers, inviteToTenant, removeTenantMember, upsertTenant } from "@/lib/tenants.functions";
+import { listBoostModules, listTenantBoostModules, setTenantBoostModule, type TenantModuleStatus } from "@/lib/launchpad.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

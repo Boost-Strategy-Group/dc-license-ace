@@ -1,73 +1,51 @@
-# BoostMyWorkforce v3 — Phased Implementation Plan
+## Two fixes
 
-Phase-by-phase. Each phase ships end-to-end before the next starts. Phases 1–2 are done; we resume at Phase 3.
+### 1. "Open builder" button doesn't navigate
+On `/admin/courses`, the card uses `<Link><Button>...</Button></Link>`. That nests a `<button>` inside an `<a>`, which is invalid HTML and prevents clicks from triggering navigation in most browsers.
 
----
+**Fix:** make the Button render *as* the Link using `asChild` so a single `<a>` is rendered (no nested button). Same fix applied to the "AI Course Factory" link in the same header. Apply to any other `<Link><Button>` pairs found in admin course/builder pages.
 
-## Phase 1 — Foundation (DONE)
-- DB restructure: `boost_modules`, `tenant_boost_modules`, `course_publications`, `apprenticeship_programs`, `learners`, `rti_completions`, `employees`, state-training tables, `tenants` branding/domain columns.
-- Seeded four modules: **Boost!Roles, Boost!Perform, Boost!Pulse, Boost!Learn**.
-- Auth + landing rebrand to "BOOST Learning & Credentialing".
-- Launchpad + ModuleTile reading per-tenant entitlements.
-- Integration stubs: BBS Community Builder Pro, TalentLMS.
+### 2. AI Course Factory: review & approve before persisting
 
-## Phase 2 — Tenant & Student Admin (DONE)
-- Tenants list + create wizard with branding.
-- Tenant detail: branding, members, invites, GoSprout panel.
-- Per-tenant module entitlements (active / coming_soon / available).
-- Student Management: pick tenant, enroll by email, toggle per-learner module access.
-- Test-user quick login + auto-role-grant trigger for `jackie@boost.test`, `admin@boost.test`, `learner@boost.test`.
+**Today:** The form posts to `generateCourseFromAi`, which immediately inserts the course, modules, lessons, learning objectives, final exam, and pre/post surveys, then redirects to the builder. No approval step.
 
----
+**Change to a two-step flow:**
 
-## Phase 3 — Module Shells (DONE)
-Roles, Perform, Pulse, Learn shells + shared `/employees` directory shipped.
+1. **Step 1 — Draft the plan.** Split the server function into:
+   - `draftCourseFromAi(input)` — calls Gemini, returns the structured plan JSON (description, CEU, learning objectives, modules + lessons, final quiz, pre/post survey prompts). Writes **nothing** to the database except an `ai_generations` row for audit.
+   - `createCourseFromPlan({ input, plan })` — accepts the (possibly edited) plan and performs all the inserts that `generateCourseFromAi` does today. Returns `{ courseId, slug }`.
 
-## Phase 5 — Publishing & Catalog (CURRENT)
-SuperAdmin publish picker, `course_publications` writers, tenant-scoped course lists, BBS push via stub.
+2. **Step 2 — Review screen on `/admin/ai-factory`:**
+   - After "Generate course draft", show a review panel instead of redirecting:
+     - Course description (editable textarea)
+     - CEU value (editable)
+     - Learning objectives (editable list)
+     - Modules → lessons outline (collapsible; each title/summary/kind editable; lessons can be deleted)
+     - Final exam items (stem + options + correct + rationale; editable)
+     - Pre / Post survey prompts (editable)
+   - Three actions:
+     - **Regenerate** — re-call `draftCourseFromAi` with the original brief (or an optional "refinement notes" field)
+     - **Approve & create course** — call `createCourseFromPlan` with the edited plan, then redirect to `/admin/courses/$courseId`
+     - **Cancel** — clears the draft, returns to the brief form
 
-## Phase 4 — BOOST! Implementation Agent (DONE)
-Animated assistant named **BOOST!** that takes clients through a per-module setup wizard, answers questions, and configures the system. Scope: **Roles, Perform, Pulse only.** Training and Apprenticeship questions are always routed to BSG support.
+3. **State handling:** keep the draft in component state only (not persisted) until the user approves; matches the project rule that go-lives require explicit approval.
 
-Behavior:
-- Per-module setup wizards (Roles, Perform, Pulse): conversational, collects inputs, writes config to the DB.
-- Uses AI to draft artifacts (job descriptions, goal/performance-plan structures, survey question sets) and stages them as **drafts** — never auto-published.
-- For config requests → executes via server functions.
-- For "change beyond config" requests → offers a workaround **or** opens a support ticket to BSG.
-- For Learn/Apprenticeship requests → always routes to BSG support ticket.
-- **Approval gate**: before any performance plan, engagement survey, or goal program goes live, BOOST! sends a verification email to the requesting admin with a one-click "Confirm & Publish" link. Approval, who approved, and timestamp are written to an audit log.
-- Animated avatar (lottie or CSS) with idle / thinking / success / blocked states.
+### Verification (after build mode)
 
-Pieces:
-- `boost_agent_sessions`, `boost_agent_messages`, `boost_agent_actions`, `boost_agent_approvals` tables.
-- AI SDK chat server route under `src/routes/api/boost-agent.ts` using Lovable AI (`google/gemini-3-flash-preview`).
-- Tools: `propose_jd`, `propose_goal_plan`, `propose_survey`, `stage_publish`, `request_approval`, `open_support_ticket`.
-- Approval email via Lovable Emails with magic-token confirm route.
-- UI: floating BOOST! launcher on every module home; full-screen wizard mode for first-run setup.
+Drive Playwright as `admin@boost.test`:
+- Click an existing course card → confirm the builder opens (URL changes, builder UI renders)
+- AI Factory: submit brief → review screen appears, no `courses` row written yet
+- Edit a module title in the review → click Approve → `courses` row + correct modules/lessons exist; redirect to builder lands on the new course
+- Click Cancel from review → no rows created
+- Run `psql` cleanup to delete the QA test course
 
-## Phase 5 — Publishing & Catalog
-SuperAdmin publish picker, `course_publications` writers, tenant-scoped course lists, BBS push via stub.
+### Files touched
+- `src/lib/ai-factory.functions.ts` — split into `draftCourseFromAi` + `createCourseFromPlan`; keep `generateCourseFromAi` as a thin wrapper for backward compat or remove it (only caller is the factory page)
+- `src/routes/_app/admin.ai-factory.tsx` — add review/approve UI and state machine
+- `src/routes/_app/admin.courses.tsx` — `asChild` fix on Link + Button
+- (audit) other admin course pages for the same `<Link><Button>` pattern
 
-## Phase 6 — State Training Vertical
-Eligibility screener, vouchers + Stripe copay, scheduler, authorizations queue.
-
-## Phase 7 — Apprenticeship / RTI Reporting (DONE)
-Learner RTI dashboard (`/apprenticeship/rti`), admin Apprenticeship console (`/admin/apprenticeship`) with programs CRUD, roster + RTI progress rollups, and GoSprout-compatible CSV export.
-
-## Phase 8 — Polish & Public Marketing (DONE)
-- Marketing homepage rebuilt around the four-modules pitch.
-- **No client logos or named client lists on the public site** — generic industry verticals only.
-- SEO: title, meta description, OG tags, canonical, robots.txt, sitemap.xml.
-
-
----
-
-## Out of Scope (defer)
-- True SSO with GoSprout / TalentLMS.
-- Multi-tenant switcher for users in >1 tenant.
-- HeyGen avatar narration inside module pages.
-- BOOST! agent for Learn or Apprenticeship modules (always BSG support).
-
----
-
-**Next action:** Start Phase 3 (module shells) then Phase 4 (BOOST! agent) — both can begin in parallel since the agent UI hooks into the module shells.
+### Out of scope
+- Needs assessment flow (already has its own page; not changing)
+- AI work product generation
+- New AI features beyond review/approval

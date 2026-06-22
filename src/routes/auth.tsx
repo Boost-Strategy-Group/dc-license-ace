@@ -175,6 +175,7 @@ function AuthPage() {
                 <div className="grid gap-2">
                   {[
                     { label: "Super Admin", email: "jackie@boost.test" },
+                    { label: "BSG Admin", email: "bsg-admin@boost.test" },
                     { label: "Tenant Admin", email: "admin@boost.test" },
                     { label: "Learner", email: "learner@boost.test" },
                   ].map((u) => (

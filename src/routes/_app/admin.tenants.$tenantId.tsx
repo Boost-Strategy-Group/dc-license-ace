@@ -199,7 +199,77 @@ function TenantDetail() {
         </CardContent>
       </Card>
 
+      <BoostModulesCard tenantId={tenantId} />
+
       <GoSproutAdminPanel tenantId={tenantId} />
     </div>
+  );
+}
+
+const MODULE_LABELS: Record<string, { label: string; tag: string }> = {
+  roles: { label: "Boost!Roles", tag: "Job descriptions & org chart" },
+  perform: { label: "Boost!Perform", tag: "Goals, reviews, 1:1s" },
+  pulse: { label: "Boost!Pulse", tag: "Engagement surveys" },
+  learn: { label: "Boost!Learn", tag: "Training & credentials" },
+};
+
+function BoostModulesCard({ tenantId }: { tenantId: string }) {
+  const listAllFn = useServerFn(listBoostModules);
+  const listTenantFn = useServerFn(listTenantBoostModules);
+  const setFn = useServerFn(setTenantBoostModule);
+  const qc = useQueryClient();
+
+  const { data: all } = useQuery({ queryKey: ["boost-modules"], queryFn: () => listAllFn() });
+  const { data: entitlements } = useQuery({
+    queryKey: ["tenant-boost-modules", tenantId],
+    queryFn: () => listTenantFn({ data: { tenantId } }),
+  });
+
+  const mut = useMutation({
+    mutationFn: (vars: { boostModuleId: string; status: TenantModuleStatus }) =>
+      setFn({ data: { tenantId, ...vars } }),
+    onSuccess: () => {
+      toast.success("Updated");
+      qc.invalidateQueries({ queryKey: ["tenant-boost-modules", tenantId] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const statusFor = (modId: string): TenantModuleStatus =>
+    (entitlements ?? []).find((e) => e.boost_module_id === modId)?.status ?? "available";
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Boost! modules</CardTitle>
+        <p className="text-sm text-muted-foreground">Control which tiles appear on this tenant's Launchpad.</p>
+      </CardHeader>
+      <CardContent>
+        <ul className="divide-y divide-border">
+          {(all ?? []).map((m) => {
+            const meta = MODULE_LABELS[m.key] ?? { label: m.name, tag: m.tagline ?? "" };
+            const current = statusFor(m.id);
+            return (
+              <li key={m.id} className="flex items-center justify-between gap-3 py-3">
+                <div>
+                  <div className="font-medium">{meta.label}</div>
+                  <div className="text-xs text-muted-foreground">{meta.tag}</div>
+                </div>
+                <select
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={current}
+                  onChange={(e) => mut.mutate({ boostModuleId: m.id, status: e.target.value as TenantModuleStatus })}
+                  disabled={mut.isPending}
+                >
+                  <option value="available">Available (upsell)</option>
+                  <option value="coming_soon">Coming soon</option>
+                  <option value="active">Active</option>
+                </select>
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

@@ -21,8 +21,10 @@ export const Route = createFileRoute("/_app/modules/perform")({
 
 function PerformHome() {
   const qc = useQueryClient();
-  const cats = useQuery({ queryKey: ["goal-cats"], queryFn: useServerFn(listGoalCategories).bind(null, { data: {} }) as any });
-  const cycles = useQuery({ queryKey: ["cycles"], queryFn: useServerFn(listReviewCycles).bind(null, { data: {} }) as any });
+  const listCats = useServerFn(listGoalCategories);
+  const listCycs = useServerFn(listReviewCycles);
+  const cats = useQuery({ queryKey: ["goal-cats"], queryFn: () => listCats({ data: {} }) });
+  const cycles = useQuery({ queryKey: ["cycles"], queryFn: () => listCycs({ data: {} }) });
   const createCat = useServerFn(createGoalCategory);
   const createCyc = useServerFn(createReviewCycle);
 

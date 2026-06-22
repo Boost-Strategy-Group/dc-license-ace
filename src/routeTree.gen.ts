@@ -34,6 +34,7 @@ import { Route as AppModulesPulseRouteImport } from './routes/_app/modules.pulse
 import { Route as AppModulesPerformRouteImport } from './routes/_app/modules.perform'
 import { Route as AppModulesLearnRouteImport } from './routes/_app/modules.learn'
 import { Route as AppLearnCourseIdRouteImport } from './routes/_app/learn.$courseId'
+import { Route as AppApprenticeshipRtiRouteImport } from './routes/_app/apprenticeship.rti'
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminStudentManagementRouteImport } from './routes/_app/admin.student-management'
@@ -42,6 +43,7 @@ import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.quest
 import { Route as AppAdminPublicationsRouteImport } from './routes/_app/admin.publications'
 import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.integrations'
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
+import { Route as AppAdminApprenticeshipRouteImport } from './routes/_app/admin.apprenticeship'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -177,6 +179,11 @@ const AppLearnCourseIdRoute = AppLearnCourseIdRouteImport.update({
   path: '/learn/$courseId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppApprenticeshipRtiRoute = AppApprenticeshipRtiRouteImport.update({
+  id: '/apprenticeship/rti',
+  path: '/apprenticeship/rti',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminTenantsRoute = AppAdminTenantsRouteImport.update({
   id: '/tenants',
   path: '/tenants',
@@ -216,6 +223,11 @@ const AppAdminIntegrationsRoute = AppAdminIntegrationsRouteImport.update({
 const AppAdminCoursesRoute = AppAdminCoursesRouteImport.update({
   id: '/courses',
   path: '/courses',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminApprenticeshipRoute = AppAdminApprenticeshipRouteImport.update({
+  id: '/apprenticeship',
+  path: '/apprenticeship',
   getParentRoute: () => AppAdminRoute,
 } as any)
 const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
@@ -294,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/apprenticeship': typeof AppAdminApprenticeshipRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/integrations': typeof AppAdminIntegrationsRoute
   '/admin/publications': typeof AppAdminPublicationsRoute
@@ -302,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/student-management': typeof AppAdminStudentManagementRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/apprenticeship/rti': typeof AppApprenticeshipRtiRoute
   '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/modules/learn': typeof AppModulesLearnRoute
   '/modules/perform': typeof AppModulesPerformRoute
@@ -338,6 +352,7 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/admin/apprenticeship': typeof AppAdminApprenticeshipRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/admin/integrations': typeof AppAdminIntegrationsRoute
   '/admin/publications': typeof AppAdminPublicationsRoute
@@ -346,6 +361,7 @@ export interface FileRoutesByTo {
   '/admin/student-management': typeof AppAdminStudentManagementRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/apprenticeship/rti': typeof AppApprenticeshipRtiRoute
   '/learn/$courseId': typeof AppLearnCourseIdRoute
   '/modules/learn': typeof AppModulesLearnRoute
   '/modules/perform': typeof AppModulesPerformRoute
@@ -384,6 +400,7 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/_app/admin/apprenticeship': typeof AppAdminApprenticeshipRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
   '/_app/admin/integrations': typeof AppAdminIntegrationsRoute
   '/_app/admin/publications': typeof AppAdminPublicationsRoute
@@ -392,6 +409,7 @@ export interface FileRoutesById {
   '/_app/admin/student-management': typeof AppAdminStudentManagementRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
+  '/_app/apprenticeship/rti': typeof AppApprenticeshipRtiRoute
   '/_app/learn/$courseId': typeof AppLearnCourseIdRoute
   '/_app/modules/learn': typeof AppModulesLearnRoute
   '/_app/modules/perform': typeof AppModulesPerformRoute
@@ -430,6 +448,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/admin/ai-factory'
     | '/admin/analytics'
+    | '/admin/apprenticeship'
     | '/admin/courses'
     | '/admin/integrations'
     | '/admin/publications'
@@ -438,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin/student-management'
     | '/admin/students'
     | '/admin/tenants'
+    | '/apprenticeship/rti'
     | '/learn/$courseId'
     | '/modules/learn'
     | '/modules/perform'
@@ -474,6 +494,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/admin/ai-factory'
     | '/admin/analytics'
+    | '/admin/apprenticeship'
     | '/admin/courses'
     | '/admin/integrations'
     | '/admin/publications'
@@ -482,6 +503,7 @@ export interface FileRouteTypes {
     | '/admin/student-management'
     | '/admin/students'
     | '/admin/tenants'
+    | '/apprenticeship/rti'
     | '/learn/$courseId'
     | '/modules/learn'
     | '/modules/perform'
@@ -519,6 +541,7 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
+    | '/_app/admin/apprenticeship'
     | '/_app/admin/courses'
     | '/_app/admin/integrations'
     | '/_app/admin/publications'
@@ -527,6 +550,7 @@ export interface FileRouteTypes {
     | '/_app/admin/student-management'
     | '/_app/admin/students'
     | '/_app/admin/tenants'
+    | '/_app/apprenticeship/rti'
     | '/_app/learn/$courseId'
     | '/_app/modules/learn'
     | '/_app/modules/perform'
@@ -738,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLearnCourseIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/apprenticeship/rti': {
+      id: '/_app/apprenticeship/rti'
+      path: '/apprenticeship/rti'
+      fullPath: '/apprenticeship/rti'
+      preLoaderRoute: typeof AppApprenticeshipRtiRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/admin/tenants': {
       id: '/_app/admin/tenants'
       path: '/tenants'
@@ -792,6 +823,13 @@ declare module '@tanstack/react-router' {
       path: '/courses'
       fullPath: '/admin/courses'
       preLoaderRoute: typeof AppAdminCoursesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/apprenticeship': {
+      id: '/_app/admin/apprenticeship'
+      path: '/apprenticeship'
+      fullPath: '/admin/apprenticeship'
+      preLoaderRoute: typeof AppAdminApprenticeshipRouteImport
       parentRoute: typeof AppAdminRoute
     }
     '/_app/admin/analytics': {
@@ -912,6 +950,7 @@ const AppAdminTenantsRouteWithChildren = AppAdminTenantsRoute._addFileChildren(
 interface AppAdminRouteChildren {
   AppAdminAiFactoryRoute: typeof AppAdminAiFactoryRoute
   AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+  AppAdminApprenticeshipRoute: typeof AppAdminApprenticeshipRoute
   AppAdminCoursesRoute: typeof AppAdminCoursesRouteWithChildren
   AppAdminIntegrationsRoute: typeof AppAdminIntegrationsRoute
   AppAdminPublicationsRoute: typeof AppAdminPublicationsRoute
@@ -925,6 +964,7 @@ interface AppAdminRouteChildren {
 const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminAiFactoryRoute: AppAdminAiFactoryRoute,
   AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+  AppAdminApprenticeshipRoute: AppAdminApprenticeshipRoute,
   AppAdminCoursesRoute: AppAdminCoursesRouteWithChildren,
   AppAdminIntegrationsRoute: AppAdminIntegrationsRoute,
   AppAdminPublicationsRoute: AppAdminPublicationsRoute,
@@ -949,6 +989,7 @@ interface AppRouteChildren {
   AppPracticeRoute: typeof AppPracticeRoute
   AppReviewRoute: typeof AppReviewRoute
   AppVaultRoute: typeof AppVaultRoute
+  AppApprenticeshipRtiRoute: typeof AppApprenticeshipRtiRoute
   AppLearnCourseIdRoute: typeof AppLearnCourseIdRoute
   AppModulesLearnRoute: typeof AppModulesLearnRoute
   AppModulesPerformRoute: typeof AppModulesPerformRoute
@@ -968,6 +1009,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPracticeRoute: AppPracticeRoute,
   AppReviewRoute: AppReviewRoute,
   AppVaultRoute: AppVaultRoute,
+  AppApprenticeshipRtiRoute: AppApprenticeshipRtiRoute,
   AppLearnCourseIdRoute: AppLearnCourseIdRoute,
   AppModulesLearnRoute: AppModulesLearnRoute,
   AppModulesPerformRoute: AppModulesPerformRoute,

@@ -20,6 +20,7 @@ const CADENCES = ["weekly", "biweekly", "monthly", "quarterly"] as const;
 
 function PulseHome() {
   const qc = useQueryClient();
+  const { canManageRoles } = useAuth();
   const getFn = useServerFn(getPulseCadence);
   const setFn = useServerFn(setPulseCadence);
   const cad = useQuery({ queryKey: ["pulse-cadence"], queryFn: () => getFn({ data: {} }) });

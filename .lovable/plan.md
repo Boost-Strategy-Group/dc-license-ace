@@ -54,12 +54,11 @@ Eligibility screener, vouchers + Stripe copay, scheduler, authorizations queue.
 ## Phase 7 — Apprenticeship / RTI Reporting (DONE)
 Learner RTI dashboard (`/apprenticeship/rti`), admin Apprenticeship console (`/admin/apprenticeship`) with programs CRUD, roster + RTI progress rollups, and GoSprout-compatible CSV export.
 
-## Phase 8 — Polish & Public Marketing
-- Marketing homepage: four-modules pitch.
-- **Do NOT publish client logos or named client lists publicly.** Use generic industry/vertical descriptors only.
-- SEO metadata per route, OG images.
-- Empty states, loading skeletons, mobile pass.
-- Publish.
+## Phase 8 — Polish & Public Marketing (DONE)
+- Marketing homepage rebuilt around the four-modules pitch.
+- **No client logos or named client lists on the public site** — generic industry verticals only.
+- SEO: title, meta description, OG tags, canonical, robots.txt, sitemap.xml.
+
 
 ---
 

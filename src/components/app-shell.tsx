@@ -49,8 +49,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex">
-        <div className="flex items-center gap-2 px-5 py-5">
-          <div className="grid h-9 w-9 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-display font-semibold">B</div>
+        <div className="flex items-center gap-2.5 px-5 py-5">
+          <div className="grid h-9 w-9 place-items-center rounded-md bg-background/95 p-1">
+            <img src="/boost-logo.png" alt="Boost Strategy Group" className="h-full w-full object-contain" width={36} height={36} />
+          </div>
           <div>
             <div className="font-display text-base font-semibold">Boost Readiness</div>
             <div className="text-[11px] text-sidebar-foreground/60">DC LCSW Apprenticeship</div>
@@ -106,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="flex-1 min-w-0">
         <div className="border-b border-border bg-card px-4 py-3 md:hidden flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="grid h-7 w-7 place-items-center rounded bg-primary text-primary-foreground text-xs font-semibold">B</div>
+            <img src="/boost-logo.png" alt="Boost Strategy Group" className="h-7 w-7 object-contain" width={28} height={28} />
             <span className="font-display font-semibold">Boost</span>
           </Link>
           <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>

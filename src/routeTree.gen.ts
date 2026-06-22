@@ -37,6 +37,7 @@ import { Route as AppLearnCourseIdRouteImport } from './routes/_app/learn.$cours
 import { Route as AppAdminTenantsRouteImport } from './routes/_app/admin.tenants'
 import { Route as AppAdminStudentsRouteImport } from './routes/_app/admin.students'
 import { Route as AppAdminStudentManagementRouteImport } from './routes/_app/admin.student-management'
+import { Route as AppAdminStateRouteImport } from './routes/_app/admin.state'
 import { Route as AppAdminQuestionsRouteImport } from './routes/_app/admin.questions'
 import { Route as AppAdminPublicationsRouteImport } from './routes/_app/admin.publications'
 import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.integrations'
@@ -192,6 +193,11 @@ const AppAdminStudentManagementRoute =
     path: '/student-management',
     getParentRoute: () => AppAdminRoute,
   } as any)
+const AppAdminStateRoute = AppAdminStateRouteImport.update({
+  id: '/state',
+  path: '/state',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminQuestionsRoute = AppAdminQuestionsRouteImport.update({
   id: '/questions',
   path: '/questions',
@@ -292,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/admin/integrations': typeof AppAdminIntegrationsRoute
   '/admin/publications': typeof AppAdminPublicationsRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
+  '/admin/state': typeof AppAdminStateRoute
   '/admin/student-management': typeof AppAdminStudentManagementRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -335,6 +342,7 @@ export interface FileRoutesByTo {
   '/admin/integrations': typeof AppAdminIntegrationsRoute
   '/admin/publications': typeof AppAdminPublicationsRoute
   '/admin/questions': typeof AppAdminQuestionsRoute
+  '/admin/state': typeof AppAdminStateRoute
   '/admin/student-management': typeof AppAdminStudentManagementRoute
   '/admin/students': typeof AppAdminStudentsRoute
   '/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/_app/admin/integrations': typeof AppAdminIntegrationsRoute
   '/_app/admin/publications': typeof AppAdminPublicationsRoute
   '/_app/admin/questions': typeof AppAdminQuestionsRoute
+  '/_app/admin/state': typeof AppAdminStateRoute
   '/_app/admin/student-management': typeof AppAdminStudentManagementRoute
   '/_app/admin/students': typeof AppAdminStudentsRoute
   '/_app/admin/tenants': typeof AppAdminTenantsRouteWithChildren
@@ -425,6 +434,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/publications'
     | '/admin/questions'
+    | '/admin/state'
     | '/admin/student-management'
     | '/admin/students'
     | '/admin/tenants'
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/publications'
     | '/admin/questions'
+    | '/admin/state'
     | '/admin/student-management'
     | '/admin/students'
     | '/admin/tenants'
@@ -512,6 +523,7 @@ export interface FileRouteTypes {
     | '/_app/admin/integrations'
     | '/_app/admin/publications'
     | '/_app/admin/questions'
+    | '/_app/admin/state'
     | '/_app/admin/student-management'
     | '/_app/admin/students'
     | '/_app/admin/tenants'
@@ -747,6 +759,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminStudentManagementRouteImport
       parentRoute: typeof AppAdminRoute
     }
+    '/_app/admin/state': {
+      id: '/_app/admin/state'
+      path: '/state'
+      fullPath: '/admin/state'
+      preLoaderRoute: typeof AppAdminStateRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/questions': {
       id: '/_app/admin/questions'
       path: '/questions'
@@ -897,6 +916,7 @@ interface AppAdminRouteChildren {
   AppAdminIntegrationsRoute: typeof AppAdminIntegrationsRoute
   AppAdminPublicationsRoute: typeof AppAdminPublicationsRoute
   AppAdminQuestionsRoute: typeof AppAdminQuestionsRoute
+  AppAdminStateRoute: typeof AppAdminStateRoute
   AppAdminStudentManagementRoute: typeof AppAdminStudentManagementRoute
   AppAdminStudentsRoute: typeof AppAdminStudentsRoute
   AppAdminTenantsRoute: typeof AppAdminTenantsRouteWithChildren
@@ -909,6 +929,7 @@ const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminIntegrationsRoute: AppAdminIntegrationsRoute,
   AppAdminPublicationsRoute: AppAdminPublicationsRoute,
   AppAdminQuestionsRoute: AppAdminQuestionsRoute,
+  AppAdminStateRoute: AppAdminStateRoute,
   AppAdminStudentManagementRoute: AppAdminStudentManagementRoute,
   AppAdminStudentsRoute: AppAdminStudentsRoute,
   AppAdminTenantsRoute: AppAdminTenantsRouteWithChildren,

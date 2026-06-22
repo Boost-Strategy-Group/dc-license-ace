@@ -28,6 +28,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/practice", label: "Practice", icon: BookOpen },
     { to: "/mock", label: "Mock exam", icon: Timer },
     { to: "/review", label: "Review queue", icon: Repeat2 },
+    { to: "/state/screening", label: "State training", icon: ShieldCheck },
   ];
   const adminNav = [
     { to: "/admin/students", label: "Students", icon: Users },

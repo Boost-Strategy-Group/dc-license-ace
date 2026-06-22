@@ -169,14 +169,18 @@ function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 60) || `course-${Date.now()}`;
 }
 
-async function assertCanAuthor(
-  supabase: { rpc: (n: "is_super_admin" | "has_tenant_role", a: Record<string, unknown>) => Promise<{ data: unknown }> },
-  userId: string,
-  tenantId: string,
-) {
-  const { data: isSuper } = await supabase.rpc("is_super_admin", { _user_id: userId });
+type AuthedSupabase = {
+  rpc: {
+    (n: "is_super_admin", a: { _user_id: string }): Promise<{ data: boolean | null }>;
+    (n: "has_tenant_role", a: { _tenant_id: string; _user_id: string; _role: "admin" }): Promise<{ data: boolean | null }>;
+  };
+};
+
+async function assertCanAuthor(supabase: unknown, userId: string, tenantId: string) {
+  const sb = supabase as AuthedSupabase;
+  const { data: isSuper } = await sb.rpc("is_super_admin", { _user_id: userId });
   if (isSuper) return;
-  const { data: isTenantAdmin } = await supabase.rpc("has_tenant_role", {
+  const { data: isTenantAdmin } = await sb.rpc("has_tenant_role", {
     _tenant_id: tenantId,
     _user_id: userId,
     _role: "admin",

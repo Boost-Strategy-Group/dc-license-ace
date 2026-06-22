@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in · Boost LCSW Readiness" }, { name: "description", content: "Sign in to the Boost Strategy Group LCSW readiness tool." }] }),
+  head: () => ({ meta: [{ title: "Sign in · BOOST Learning & Credentialing" }, { name: "description", content: "Sign in to the BOOST Learning & Credentialing Platform." }] }),
   component: AuthPage,
 });
 

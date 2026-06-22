@@ -280,7 +280,37 @@ export const createApprovalRequest = createServerFn({ method: "POST" })
       .select("id, email_token")
       .single();
     if (error) throw new Error(error.message);
-    // Email send would be wired via /lovable/email/transactional/send in a follow-up.
+
+    // Send the approval-confirmation email
+    try {
+      const req = getRequest();
+      const auth = req?.headers.get("authorization") ?? "";
+      const origin = new URL(req!.url).origin;
+      const { data: u } = await context.supabase.auth.getUser();
+      const recipient = u?.user?.email;
+      if (recipient && auth) {
+        const confirmUrl = `${origin}/approvals/${row.email_token}`;
+        const summary = (data.payload?.summary as string) ?? `${data.kind} pending approval`;
+        await fetch(`${origin}/lovable/email/transactional/send`, {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: auth },
+          body: JSON.stringify({
+            templateName: "approval-request",
+            recipientEmail: recipient,
+            idempotencyKey: `approval-${row.id}`,
+            templateData: {
+              requesterName: u?.user?.user_metadata?.full_name ?? "Admin",
+              kind: data.kind,
+              summary,
+              confirmUrl,
+            },
+          }),
+        });
+      }
+    } catch (e) {
+      console.error("approval email send failed", e);
+    }
+
     return { id: row.id, email_token: row.email_token };
   });
 

@@ -5,6 +5,8 @@ import { listTenantPublishedCourses } from "@/lib/publications.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
+import { GraduationCap, Clock, Award } from "lucide-react";
 
 export const Route = createFileRoute("/_app/modules/learn")({
   head: () => ({ meta: [{ title: "Boost!Learn · BoostMyWorkforce" }] }),
@@ -19,25 +21,25 @@ function LearnModule() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 py-12 px-4">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">Boost!Learn</h1>
-        <p className="text-muted-foreground">
-          Courses published to your organization. Open the catalog to enroll.
-        </p>
-      </header>
+    <div className="mx-auto max-w-5xl space-y-8">
+      <ModulePageHeader
+        icon={GraduationCap}
+        name="Boost!Learn"
+        tagline="Courses published to your organization. Open the catalog to enroll."
+        actions={
+          <>
+            <Button asChild><Link to="/catalog">Open full catalog</Link></Button>
+            <Button asChild variant="outline"><Link to="/dashboard">My training</Link></Button>
+          </>
+        }
+      />
 
-      <div className="flex gap-2">
-        <Button asChild><Link to="/catalog">Open full catalog</Link></Button>
-        <Button asChild variant="outline"><Link to="/dashboard">My training</Link></Button>
-      </div>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Published to your tenant</h2>
+      <section className="space-y-4">
+        <h2 className="font-display text-lg font-semibold">Published to your tenant</h2>
         {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
         {!isLoading && !data?.length && (
           <Card>
-            <CardContent className="py-8 text-center text-sm text-muted-foreground">
+            <CardContent className="py-10 text-center text-sm text-muted-foreground">
               No courses have been published to your tenant yet. Ask a super admin to publish from
               Publications.
             </CardContent>
@@ -45,23 +47,26 @@ function LearnModule() {
         )}
         <div className="grid gap-4 md:grid-cols-2">
           {(data ?? []).map((p: any) => (
-            <Card key={p.id}>
+            <Card key={p.id} className="flex flex-col transition-shadow hover:shadow-md">
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">{p.course?.title ?? "—"}</CardTitle>
-                  <Badge variant="outline" className="text-[10px]">{p.tenant?.name}</Badge>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-base leading-snug text-balance">{p.course?.title ?? "—"}</CardTitle>
+                  <Badge variant="outline" className="shrink-0 text-[10px]">{p.tenant?.name}</Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="flex flex-1 flex-col space-y-3">
                 <p className="line-clamp-2 text-sm text-muted-foreground">
                   {p.course?.description ?? "—"}
                 </p>
-                <div className="flex gap-2 text-xs text-muted-foreground">
-                  <span>{p.course?.contact_hours ?? 0}h</span>
-                  <span>·</span>
-                  <span>{p.course?.ceu_value ?? 0} CEU</span>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Clock className="size-3.5" aria-hidden /> {p.course?.contact_hours ?? 0}h
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Award className="size-3.5" aria-hidden /> {p.course?.ceu_value ?? 0} CEU
+                  </span>
                 </div>
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="outline" className="mt-auto w-full">
                   <Link to="/catalog">Enroll via catalog</Link>
                 </Button>
               </CardContent>

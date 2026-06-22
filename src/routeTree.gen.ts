@@ -9,11 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as ApprovalsTokenRouteImport } from './routes/approvals.$token'
 import { Route as AppVaultRouteImport } from './routes/_app/vault'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
@@ -23,6 +26,7 @@ import { Route as AppEmployeesRouteImport } from './routes/_app/employees'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
 import { Route as AppModulesRolesRouteImport } from './routes/_app/modules.roles'
 import { Route as AppModulesPulseRouteImport } from './routes/_app/modules.pulse'
@@ -37,6 +41,8 @@ import { Route as AppAdminIntegrationsRouteImport } from './routes/_app/admin.in
 import { Route as AppAdminCoursesRouteImport } from './routes/_app/admin.courses'
 import { Route as AppAdminAnalyticsRouteImport } from './routes/_app/admin.analytics'
 import { Route as AppAdminAiFactoryRouteImport } from './routes/_app/admin.ai-factory'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AppAdminTenantsTenantIdRouteImport } from './routes/_app/admin.tenants.$tenantId'
@@ -44,6 +50,11 @@ import { Route as AppAdminCoursesCourseIdRouteImport } from './routes/_app/admin
 import { Route as AppAdminCoursesCourseIdNeedsAssessmentRouteImport } from './routes/_app/admin.courses.$courseId.needs-assessment'
 import { Route as AppAdminCoursesCourseIdAssessmentsAssessmentIdRouteImport } from './routes/_app/admin.courses.$courseId.assessments.$assessmentId'
 
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -58,6 +69,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
   path: '/checkout/return',
@@ -66,6 +82,11 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
 const CSlugRoute = CSlugRouteImport.update({
   id: '/c/$slug',
   path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApprovalsTokenRoute = ApprovalsTokenRouteImport.update({
+  id: '/approvals/$token',
+  path: '/approvals/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppVaultRoute = AppVaultRouteImport.update({
@@ -112,6 +133,11 @@ const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AppRoute,
+} as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppSessionIdRoute = AppSessionIdRouteImport.update({
   id: '/session/$id',
@@ -184,6 +210,18 @@ const AppAdminAiFactoryRoute = AppAdminAiFactoryRouteImport.update({
   path: '/ai-factory',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -222,6 +260,7 @@ const AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
@@ -231,8 +270,10 @@ export interface FileRoutesByFullPath {
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -247,16 +288,20 @@ export interface FileRoutesByFullPath {
   '/modules/pulse': typeof AppModulesPulseRoute
   '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AppAdminRouteWithChildren
   '/catalog': typeof AppCatalogRoute
   '/dashboard': typeof AppDashboardRoute
@@ -266,8 +311,10 @@ export interface FileRoutesByTo {
   '/practice': typeof AppPracticeRoute
   '/review': typeof AppReviewRoute
   '/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/admin/analytics': typeof AppAdminAnalyticsRoute
   '/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -282,10 +329,13 @@ export interface FileRoutesByTo {
   '/modules/pulse': typeof AppModulesPulseRoute
   '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -294,6 +344,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/catalog': typeof AppCatalogRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -303,8 +354,10 @@ export interface FileRoutesById {
   '/_app/practice': typeof AppPracticeRoute
   '/_app/review': typeof AppReviewRoute
   '/_app/vault': typeof AppVaultRoute
+  '/approvals/$token': typeof ApprovalsTokenRoute
   '/c/$slug': typeof CSlugRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/_app/admin/ai-factory': typeof AppAdminAiFactoryRoute
   '/_app/admin/analytics': typeof AppAdminAnalyticsRoute
   '/_app/admin/courses': typeof AppAdminCoursesRouteWithChildren
@@ -319,10 +372,13 @@ export interface FileRoutesById {
   '/_app/modules/pulse': typeof AppModulesPulseRoute
   '/_app/modules/roles': typeof AppModulesRolesRoute
   '/_app/session/$id': typeof AppSessionIdRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/_app/admin/courses/$courseId/needs-assessment': typeof AppAdminCoursesCourseIdNeedsAssessmentRoute
   '/_app/admin/courses/$courseId/assessments/$assessmentId': typeof AppAdminCoursesCourseIdAssessmentsAssessmentIdRoute
 }
@@ -331,6 +387,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/unsubscribe'
     | '/admin'
     | '/catalog'
     | '/dashboard'
@@ -340,8 +397,10 @@ export interface FileRouteTypes {
     | '/practice'
     | '/review'
     | '/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
+    | '/email/unsubscribe'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -356,16 +415,20 @@ export interface FileRouteTypes {
     | '/modules/pulse'
     | '/modules/roles'
     | '/session/$id'
+    | '/lovable/email/suppression'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/unsubscribe'
     | '/admin'
     | '/catalog'
     | '/dashboard'
@@ -375,8 +438,10 @@ export interface FileRouteTypes {
     | '/practice'
     | '/review'
     | '/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
+    | '/email/unsubscribe'
     | '/admin/ai-factory'
     | '/admin/analytics'
     | '/admin/courses'
@@ -391,10 +456,13 @@ export interface FileRouteTypes {
     | '/modules/pulse'
     | '/modules/roles'
     | '/session/$id'
+    | '/lovable/email/suppression'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/admin/courses/$courseId/needs-assessment'
     | '/admin/courses/$courseId/assessments/$assessmentId'
   id:
@@ -402,6 +470,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/auth'
+    | '/unsubscribe'
     | '/_app/admin'
     | '/_app/catalog'
     | '/_app/dashboard'
@@ -411,8 +480,10 @@ export interface FileRouteTypes {
     | '/_app/practice'
     | '/_app/review'
     | '/_app/vault'
+    | '/approvals/$token'
     | '/c/$slug'
     | '/checkout/return'
+    | '/email/unsubscribe'
     | '/_app/admin/ai-factory'
     | '/_app/admin/analytics'
     | '/_app/admin/courses'
@@ -427,10 +498,13 @@ export interface FileRouteTypes {
     | '/_app/modules/pulse'
     | '/_app/modules/roles'
     | '/_app/session/$id'
+    | '/lovable/email/suppression'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
     | '/_app/admin/courses/$courseId/needs-assessment'
     | '/_app/admin/courses/$courseId/assessments/$assessmentId'
   fileRoutesById: FileRoutesById
@@ -439,14 +513,27 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
+  ApprovalsTokenRoute: typeof ApprovalsTokenRoute
   CSlugRoute: typeof CSlugRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -468,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout/return': {
       id: '/checkout/return'
       path: '/checkout/return'
@@ -480,6 +574,13 @@ declare module '@tanstack/react-router' {
       path: '/c/$slug'
       fullPath: '/c/$slug'
       preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/approvals/$token': {
+      id: '/approvals/$token'
+      path: '/approvals/$token'
+      fullPath: '/approvals/$token'
+      preLoaderRoute: typeof ApprovalsTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/vault': {
@@ -544,6 +645,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/session/$id': {
       id: '/_app/session/$id'
@@ -642,6 +750,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/ai-factory'
       preLoaderRoute: typeof AppAdminAiFactoryRouteImport
       parentRoute: typeof AppAdminRoute
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
       id: '/lovable/email/queue/process'
@@ -798,10 +920,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
+  ApprovalsTokenRoute: ApprovalsTokenRoute,
   CSlugRoute: CSlugRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -150,13 +150,40 @@ export const boostAgentChat = createServerFn({ method: "POST" })
               kind: input.kind,
               target_id: input.target_id ?? null,
               payload: { summary: input.summary },
-            }).select("id").single();
+            }).select("id, email_token").single();
           if (error) return { ok: false, error: error.message };
+          // Fire the confirmation email
+          try {
+            const req = (await import("@tanstack/react-start/server")).getRequest();
+            const auth = req?.headers.get("authorization") ?? "";
+            const origin = req ? new URL(req.url).origin : "";
+            const { data: u } = await supabase.auth.getUser();
+            const recipient = u?.user?.email;
+            if (recipient && auth && origin) {
+              await fetch(`${origin}/lovable/email/transactional/send`, {
+                method: "POST",
+                headers: { "content-type": "application/json", authorization: auth },
+                body: JSON.stringify({
+                  templateName: "approval-request",
+                  recipientEmail: recipient,
+                  idempotencyKey: `approval-${row.id}`,
+                  templateData: {
+                    requesterName: u?.user?.user_metadata?.full_name ?? "Admin",
+                    kind: input.kind,
+                    summary: input.summary,
+                    confirmUrl: `${origin}/approvals/${row.email_token}`,
+                  },
+                }),
+              });
+            }
+          } catch (e) {
+            console.error("agent approval email failed", e);
+          }
           return {
             ok: true,
             id: row.id,
             message:
-              "Approval created. The requesting admin will receive a confirmation email; clicking the link finalizes the go-live.",
+              "Approval created. A confirmation email has been sent to the requesting admin; clicking the link finalizes the go-live.",
           };
         },
       }),

@@ -22,13 +22,28 @@ export const listPublications = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("course_publications")
       .select(
-        "id, course_id, target_type, target_id, source, status, published_at, published_by, course:courses(id, title, slug, status), tenant:tenants!course_publications_target_id_fkey(id, name, slug)",
+        "id, course_id, target_type, target_id, source, status, published_at, published_by, course:courses(id, title, slug, status)",
       )
       .order("published_at", { ascending: false });
     if (data.courseId) q = q.eq("course_id", data.courseId);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return (rows ?? []) as any[];
+
+    const tenantIds = Array.from(
+      new Set((rows ?? []).filter((r) => r.target_type === "tenant" && r.target_id).map((r) => r.target_id as string)),
+    );
+    let tenantMap: Record<string, { id: string; name: string; slug: string }> = {};
+    if (tenantIds.length) {
+      const { data: tns } = await context.supabase
+        .from("tenants")
+        .select("id, name, slug")
+        .in("id", tenantIds);
+      tenantMap = Object.fromEntries((tns ?? []).map((t) => [t.id, t]));
+    }
+    return (rows ?? []).map((r) => ({
+      ...r,
+      tenant: r.target_type === "tenant" && r.target_id ? tenantMap[r.target_id] ?? null : null,
+    }));
   });
 
 export const publishCourseToTenant = createServerFn({ method: "POST" })

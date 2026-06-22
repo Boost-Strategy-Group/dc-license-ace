@@ -27,6 +27,7 @@ import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as AppStateScreeningRouteImport } from './routes/_app/state.screening'
 import { Route as AppSessionIdRouteImport } from './routes/_app/session.$id'
 import { Route as AppModulesRolesRouteImport } from './routes/_app/modules.roles'
 import { Route as AppModulesPulseRouteImport } from './routes/_app/modules.pulse'
@@ -139,6 +140,11 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppStateScreeningRoute = AppStateScreeningRouteImport.update({
+  id: '/state/screening',
+  path: '/state/screening',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppSessionIdRoute = AppSessionIdRouteImport.update({
   id: '/session/$id',
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/modules/pulse': typeof AppModulesPulseRoute
   '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/state/screening': typeof AppStateScreeningRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -337,6 +344,7 @@ export interface FileRoutesByTo {
   '/modules/pulse': typeof AppModulesPulseRoute
   '/modules/roles': typeof AppModulesRolesRoute
   '/session/$id': typeof AppSessionIdRoute
+  '/state/screening': typeof AppStateScreeningRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -381,6 +389,7 @@ export interface FileRoutesById {
   '/_app/modules/pulse': typeof AppModulesPulseRoute
   '/_app/modules/roles': typeof AppModulesRolesRoute
   '/_app/session/$id': typeof AppSessionIdRoute
+  '/_app/state/screening': typeof AppStateScreeningRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_app/admin/courses/$courseId': typeof AppAdminCoursesCourseIdRouteWithChildren
   '/_app/admin/tenants/$tenantId': typeof AppAdminTenantsTenantIdRoute
@@ -425,6 +434,7 @@ export interface FileRouteTypes {
     | '/modules/pulse'
     | '/modules/roles'
     | '/session/$id'
+    | '/state/screening'
     | '/lovable/email/suppression'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -467,6 +477,7 @@ export interface FileRouteTypes {
     | '/modules/pulse'
     | '/modules/roles'
     | '/session/$id'
+    | '/state/screening'
     | '/lovable/email/suppression'
     | '/admin/courses/$courseId'
     | '/admin/tenants/$tenantId'
@@ -510,6 +521,7 @@ export interface FileRouteTypes {
     | '/_app/modules/pulse'
     | '/_app/modules/roles'
     | '/_app/session/$id'
+    | '/_app/state/screening'
     | '/lovable/email/suppression'
     | '/_app/admin/courses/$courseId'
     | '/_app/admin/tenants/$tenantId'
@@ -664,6 +676,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/lovable/email/suppression'
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/state/screening': {
+      id: '/_app/state/screening'
+      path: '/state/screening'
+      fullPath: '/state/screening'
+      preLoaderRoute: typeof AppStateScreeningRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/session/$id': {
       id: '/_app/session/$id'
@@ -915,6 +934,7 @@ interface AppRouteChildren {
   AppModulesPulseRoute: typeof AppModulesPulseRoute
   AppModulesRolesRoute: typeof AppModulesRolesRoute
   AppSessionIdRoute: typeof AppSessionIdRoute
+  AppStateScreeningRoute: typeof AppStateScreeningRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -933,6 +953,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppModulesPulseRoute: AppModulesPulseRoute,
   AppModulesRolesRoute: AppModulesRolesRoute,
   AppSessionIdRoute: AppSessionIdRoute,
+  AppStateScreeningRoute: AppStateScreeningRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

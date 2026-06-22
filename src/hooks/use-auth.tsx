@@ -9,8 +9,10 @@ type AuthCtx = {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  isTenantAdmin: boolean;
   roles: string[];
   canManageRoles: boolean;
+  canManageStudents: boolean;
   signOut: () => Promise<void>;
 };
 
@@ -19,8 +21,10 @@ const Ctx = createContext<AuthCtx>({
   session: null,
   loading: true,
   isAdmin: false,
+  isTenantAdmin: false,
   roles: [],
   canManageRoles: false,
+  canManageStudents: false,
   signOut: async () => {},
 });
 
@@ -29,8 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<string[]>([]);
   const isAdmin = roles.some((r) => r === "admin" || r === "super_admin");
+  const isTenantAdmin = roles.some((r) => r === "tenant_admin");
   const canManageRoles = roles.some((r) =>
     ["admin", "super_admin", "tenant_admin", "instructor"].includes(r),
+  );
+  const canManageStudents = roles.some((r) =>
+    ["admin", "super_admin", "tenant_admin"].includes(r),
   );
   const router = useRouter();
   const qc = useQueryClient();

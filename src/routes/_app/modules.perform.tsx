@@ -14,6 +14,7 @@ import { BoostAgent } from "@/components/boost/BoostAgent";
 import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
 import { Target, CalendarRange, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/modules/perform")({
   head: () => ({ meta: [{ title: "Boost!Perform · BoostMyWorkforce" }] }),

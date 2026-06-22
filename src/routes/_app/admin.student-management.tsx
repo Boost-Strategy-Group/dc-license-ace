@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UserPlus } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/admin/student-management")({
   head: () => ({ meta: [{ title: "Student Management · Boost Admin" }] }),
@@ -34,11 +35,28 @@ const MODULE_LABELS: Record<string, string> = {
 };
 
 function StudentManagement() {
+  const { canManageStudents, loading } = useAuth();
   const tenantsFn = useServerFn(listTenants);
-  const { data: tenants } = useQuery({ queryKey: ["tenants"], queryFn: () => tenantsFn() });
+  const { data: tenants } = useQuery({
+    queryKey: ["tenants"],
+    queryFn: () => tenantsFn(),
+    enabled: canManageStudents,
+  });
 
   const [tenantId, setTenantId] = useState<string>("");
   const activeTenantId = tenantId || tenants?.[0]?.id || "";
+
+  if (loading) return null;
+  if (!canManageStudents) {
+    return (
+      <div className="mx-auto max-w-2xl py-12 text-center">
+        <h1 className="font-display text-2xl font-semibold">Not available</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Adding or removing modules is a Client Admin function. Please contact your tenant administrator.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">

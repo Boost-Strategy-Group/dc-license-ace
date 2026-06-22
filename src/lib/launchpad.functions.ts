@@ -120,6 +120,16 @@ export const setTenantBoostModule = createServerFn({ method: "POST" })
     }).parse(i),
   )
   .handler(async ({ data, context }) => {
+    const { data: isSuper } = await context.supabase.rpc("is_super_admin", {
+      _user_id: context.userId,
+    });
+    const { data: isAdmin } = await context.supabase.rpc("has_tenant_role", {
+      _tenant_id: data.tenantId,
+      _user_id: context.userId,
+      _role: "tenant_admin",
+    });
+    if (!isSuper && !isAdmin) throw new Error("Forbidden");
+
     const { error } = await context.supabase
       .from("tenant_boost_modules")
       .upsert(

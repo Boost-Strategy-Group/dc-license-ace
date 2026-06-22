@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { isAdmin, signOut, user } = useAuth();
+  const { isAdmin, canManageStudents, signOut, user } = useAuth();
   const { data: superAdminCheck } = useIsSuperAdmin();
   const isSuper = !!superAdminCheck?.isSuperAdmin;
   const loc = useLocation();
@@ -33,11 +33,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   ];
   const adminNav = [
     { to: "/admin/students", label: "Students", icon: Users },
-    { to: "/admin/student-management", label: "Student management", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
     { to: "/admin/state", label: "State training", icon: ShieldCheck },
     { to: "/admin/apprenticeship", label: "Apprenticeship & RTI", icon: GraduationCap },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
+  ];
+  const tenantAdminNav = [
+    { to: "/admin/student-management", label: "Student management", icon: Users },
   ];
   const platformNav = [
     { to: "/admin/tenants", label: "Tenants", icon: Building2 },
@@ -87,6 +89,16 @@ export function AppShell({ children }: { children: ReactNode }) {
               ))}
             </>
           )}
+          {canManageStudents && (
+            <>
+              <SectionLabel>Client Admin</SectionLabel>
+              {tenantAdminNav.map((n) => (
+                <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
+                  {n.label}
+                </NavLink>
+              ))}
+            </>
+          )}
           {isSuper && (
             <>
               <SectionLabel>Platform</SectionLabel>
@@ -114,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
         </div>
         <div className="md:hidden flex gap-1 overflow-x-auto border-b border-border bg-card px-2 py-2">
-          {[...learnNav, ...boostNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
+          {[...learnNav, ...boostNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(canManageStudents ? tenantAdminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
             const Icon = n.icon;
             const active = loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to));
             return (

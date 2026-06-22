@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { Activity, BookOpen, Briefcase, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Plug, Repeat2, Rocket, Send, Sparkles, Target, Timer, Users, Wallet } from "lucide-react";
+import { Activity, BookOpen, Briefcase, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Plug, Repeat2, Rocket, Send, ShieldCheck, Sparkles, Target, Timer, Users, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -28,11 +28,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/practice", label: "Practice", icon: BookOpen },
     { to: "/mock", label: "Mock exam", icon: Timer },
     { to: "/review", label: "Review queue", icon: Repeat2 },
+    { to: "/state/screening", label: "State training", icon: ShieldCheck },
   ];
   const adminNav = [
     { to: "/admin/students", label: "Students", icon: Users },
     { to: "/admin/student-management", label: "Student management", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
+    { to: "/admin/state", label: "State training", icon: ShieldCheck },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
   ];
   const platformNav = [

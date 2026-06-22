@@ -9,6 +9,7 @@ import { BoostAgent } from "@/components/boost/BoostAgent";
 import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
 import { Activity } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/modules/pulse")({
   head: () => ({ meta: [{ title: "Boost!Pulse · BoostMyWorkforce" }] }),

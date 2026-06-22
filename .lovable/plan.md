@@ -51,8 +51,8 @@ SuperAdmin publish picker, `course_publications` writers, tenant-scoped course l
 ## Phase 6 — State Training Vertical
 Eligibility screener, vouchers + Stripe copay, scheduler, authorizations queue.
 
-## Phase 7 — Apprenticeship / RTI Reporting
-Per-learner RTI dashboard, GoSprout CSV export + reminder, mentor view.
+## Phase 7 — Apprenticeship / RTI Reporting (DONE)
+Learner RTI dashboard (`/apprenticeship/rti`), admin Apprenticeship console (`/admin/apprenticeship`) with programs CRUD, roster + RTI progress rollups, and GoSprout-compatible CSV export.
 
 ## Phase 8 — Polish & Public Marketing
 - Marketing homepage: four-modules pitch.

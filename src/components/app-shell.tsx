@@ -29,12 +29,14 @@ export function AppShell({ children }: { children: ReactNode }) {
     { to: "/mock", label: "Mock exam", icon: Timer },
     { to: "/review", label: "Review queue", icon: Repeat2 },
     { to: "/state/screening", label: "State training", icon: ShieldCheck },
+    { to: "/apprenticeship/rti", label: "My RTI hours", icon: GraduationCap },
   ];
   const adminNav = [
     { to: "/admin/students", label: "Students", icon: Users },
     { to: "/admin/student-management", label: "Student management", icon: Users },
     { to: "/admin/questions", label: "Question bank", icon: ClipboardList },
     { to: "/admin/state", label: "State training", icon: ShieldCheck },
+    { to: "/admin/apprenticeship", label: "Apprenticeship & RTI", icon: GraduationCap },
     { to: "/admin/analytics", label: "Analytics", icon: GraduationCap },
   ];
   const platformNav = [

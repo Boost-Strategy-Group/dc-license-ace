@@ -262,7 +262,7 @@ export const createApprovalRequest = createServerFn({ method: "POST" })
       tenantId: z.string().uuid().optional(),
       kind: z.string().min(1),
       target_id: z.string().uuid().optional(),
-      payload: z.record(z.string(), z.any()).optional(),
+      payload: z.record(z.any()).optional(),
     }).parse(i),
   )
   .handler(async ({ data, context }) => {

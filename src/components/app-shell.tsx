@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsSuperAdmin } from "@/hooks/use-tenants";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Plug, Repeat2, Sparkles, Timer, Users, Wallet } from "lucide-react";
+import { Activity, BookOpen, Briefcase, Building2, ClipboardList, GraduationCap, LayoutDashboard, Library, LogOut, Plug, Repeat2, Rocket, Sparkles, Target, Timer, Users, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -12,9 +12,17 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isSuper = !!superAdminCheck?.isSuperAdmin;
   const loc = useLocation();
   const learnNav = [
+    { to: "/launchpad", label: "Launchpad", icon: Rocket },
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/catalog", label: "Catalog", icon: Library },
     { to: "/vault", label: "Student vault", icon: Wallet },
+  ];
+  const boostNav = [
+    { to: "/modules/roles", label: "Boost!Roles", icon: Briefcase },
+    { to: "/modules/perform", label: "Boost!Perform", icon: Target },
+    { to: "/modules/pulse", label: "Boost!Pulse", icon: Activity },
+    { to: "/modules/learn", label: "Boost!Learn", icon: BookOpen },
+    { to: "/employees", label: "Employees", icon: Users },
   ];
   const studyNav = [
     { to: "/practice", label: "Practice", icon: BookOpen },
@@ -47,6 +55,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <SectionLabel>Learn</SectionLabel>
           {learnNav.map((n) => (
             <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to))}>
+              {n.label}
+            </NavLink>
+          ))}
+          <SectionLabel>BOOST! Modules</SectionLabel>
+          {boostNav.map((n) => (
+            <NavLink key={n.to} to={n.to} icon={n.icon} active={loc.pathname.startsWith(n.to)}>
               {n.label}
             </NavLink>
           ))}
@@ -93,7 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Button size="sm" variant="ghost" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
         </div>
         <div className="md:hidden flex gap-1 overflow-x-auto border-b border-border bg-card px-2 py-2">
-          {[...learnNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
+          {[...learnNav, ...boostNav, ...studyNav, ...(isAdmin ? adminNav : []), ...(isSuper ? platformNav : [])].map((n) => {
             const Icon = n.icon;
             const active = loc.pathname === n.to || (n.to !== "/dashboard" && loc.pathname.startsWith(n.to));
             return (

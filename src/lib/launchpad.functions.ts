@@ -29,12 +29,12 @@ export const getLaunchpad = createServerFn({ method: "GET" })
     // Resolve tenant via tenant_members (pick first; multi-tenant switching is Phase 2)
     const { data: membership } = await supabase
       .from("tenant_members")
-      .select("tenant_id, tenants(id, name, logo_asset_url)")
+      .select("tenant_id, tenants(id, name, logo_url)")
       .eq("user_id", userId)
       .limit(1)
       .maybeSingle();
 
-    const tenantRow = (membership?.tenants as { id: string; name: string; logo_asset_url: string | null } | null) ?? null;
+    const tenantRow = (membership?.tenants as { id: string; name: string; logo_url: string | null } | null) ?? null;
 
     // Load all 4 Boost! modules
     const { data: catalog, error: catErr } = await supabase

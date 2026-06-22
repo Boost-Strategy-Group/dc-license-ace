@@ -59,9 +59,11 @@ function CoursesPage() {
                 <span>·</span>
                 <span>{c.dependency_mode}</span>
               </div>
-              <Link to="/admin/courses/$courseId" params={{ courseId: c.id }}>
-                <Button variant="outline" className="w-full gap-2"><BookOpen className="h-4 w-4" /> Open builder</Button>
-              </Link>
+              <Button asChild variant="outline" className="w-full gap-2">
+                <Link to="/admin/courses/$courseId" params={{ courseId: c.id }}>
+                  <BookOpen className="h-4 w-4" /> Open builder
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         ))}

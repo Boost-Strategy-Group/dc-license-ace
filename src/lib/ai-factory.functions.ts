@@ -170,7 +170,7 @@ function slugify(s: string) {
 }
 
 async function assertCanAuthor(
-  supabase: { rpc: (n: string, a: Record<string, unknown>) => Promise<{ data: unknown }> },
+  supabase: { rpc: (n: "is_super_admin" | "has_tenant_role", a: Record<string, unknown>) => Promise<{ data: unknown }> },
   userId: string,
   tenantId: string,
 ) {

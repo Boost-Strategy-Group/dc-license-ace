@@ -185,8 +185,10 @@ function AuthPage() {
                       size="sm"
                       disabled={busy}
                       onClick={async () => {
+                        const pw = "B00st-Launch!2026$";
+                        setEmail(u.email);
+                        setPassword(pw);
                         setBusy(true);
-                        const pw = "TestPass123!";
                         let { error } = await supabase.auth.signInWithPassword({ email: u.email, password: pw });
                         if (error) {
                           const { error: suErr } = await supabase.auth.signUp({
@@ -208,7 +210,7 @@ function AuthPage() {
                     </Button>
                   ))}
                 </div>
-                <p className="mt-2 text-[11px] text-muted-foreground">Password for all: <code>TestPass123!</code></p>
+                <p className="mt-2 text-[11px] text-muted-foreground">Password for all: <code>B00st-Launch!2026$</code></p>
               </div>
             </CardContent>
           </Card>

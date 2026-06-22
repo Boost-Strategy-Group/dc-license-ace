@@ -117,6 +117,49 @@ function AuthPage() {
             <Button type="button" variant="outline" disabled={busy} onClick={handleGoogle} className="w-full">
               Continue with Google
             </Button>
+
+            <div className="mt-6 rounded-md border border-dashed border-border bg-muted/40 p-3">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Test accounts (dev)
+              </p>
+              <div className="grid gap-2">
+                {[
+                  { label: "Super Admin", email: "jackie@boost.test" },
+                  { label: "Tenant Admin", email: "admin@boost.test" },
+                  { label: "Learner", email: "learner@boost.test" },
+                ].map((u) => (
+                  <Button
+                    key={u.email}
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true);
+                      const pw = "TestPass123!";
+                      let { error } = await supabase.auth.signInWithPassword({ email: u.email, password: pw });
+                      if (error) {
+                        const { error: suErr } = await supabase.auth.signUp({
+                          email: u.email,
+                          password: pw,
+                          options: { data: { full_name: u.label }, emailRedirectTo: `${window.location.origin}/dashboard` },
+                        });
+                        if (suErr) { setBusy(false); toast.error(suErr.message); return; }
+                        ({ error } = await supabase.auth.signInWithPassword({ email: u.email, password: pw }));
+                      }
+                      setBusy(false);
+                      if (error) toast.error(error.message);
+                      else navigate({ to: "/dashboard" });
+                    }}
+                    className="w-full justify-between"
+                  >
+                    <span>{u.label}</span>
+                    <span className="text-xs text-muted-foreground">{u.email}</span>
+                  </Button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">Password for all: <code>TestPass123!</code></p>
+            </div>
           </CardContent>
         </Card>
       </div>

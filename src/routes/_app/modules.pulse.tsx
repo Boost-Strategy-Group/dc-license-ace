@@ -72,10 +72,12 @@ function PulseHome() {
           </Card>
         </div>
 
-        <BoostAgent
-          moduleKey="pulse"
-          intro="Hi — I'm BOOST! I'll help you pick a cadence and draft your first survey. Before launching, you'll get a confirmation email. What pace fits your team?"
-        />
+        {canManageRoles && (
+          <BoostAgent
+            moduleKey="pulse"
+            intro="Hi — I'm BOOST! I'll help you pick a cadence and draft your first survey. Before launching, you'll get a confirmation email. What pace fits your team?"
+          />
+        )}
       </div>
     </div>
   );

@@ -126,12 +126,21 @@ export const listTenantPublishedCourses = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("course_publications")
       .select(
-        "id, published_at, target_id, source, course:courses(id, title, slug, description, cover_image_url, contact_hours, ceu_value, status), tenant:tenants!course_publications_target_id_fkey(id, name, slug, brand_primary, logo_url)",
+        "id, published_at, target_id, source, course:courses(id, title, slug, description, cover_image_url, contact_hours, ceu_value, status)",
       )
       .eq("target_type", "tenant")
       .eq("status", "published")
       .in("target_id", tenantIds)
       .order("published_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return (data ?? []) as any[];
+
+    const { data: tns } = await context.supabase
+      .from("tenants")
+      .select("id, name, slug, brand_primary, logo_url")
+      .in("id", tenantIds);
+    const tenantMap = Object.fromEntries((tns ?? []).map((t) => [t.id, t]));
+    return (data ?? []).map((r) => ({
+      ...r,
+      tenant: r.target_id ? tenantMap[r.target_id] ?? null : null,
+    }));
   });

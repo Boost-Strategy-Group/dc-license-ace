@@ -83,9 +83,11 @@ function BuilderPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Link to="/admin/courses/$courseId/needs-assessment" params={{ courseId }}>
-              <Button variant="outline"><FileText className="mr-2 h-4 w-4" /> Needs Assessment</Button>
-            </Link>
+            <Button asChild variant="outline">
+              <Link to="/admin/courses/$courseId/needs-assessment" params={{ courseId }}>
+                <FileText className="mr-2 h-4 w-4" /> Needs Assessment
+              </Link>
+            </Button>
             {course.status !== "published" ? (
               <Button onClick={() => publishMut.mutate("published")} disabled={publishMut.isPending}>Publish</Button>
             ) : (

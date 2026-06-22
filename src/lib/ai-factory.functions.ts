@@ -125,25 +125,74 @@ const FactoryInput = z.object({
   certificationType: z.string().optional().default(""),
   industry: z.string().min(1),
   outcomes: z.string().min(1),
+  refinementNotes: z.string().optional().default(""),
 });
+
+const LessonPlan = z.object({
+  title: z.string(),
+  kind: z.string(),
+  summary: z.string().default(""),
+  duration_minutes: z.number().nullable().optional(),
+});
+const ModulePlan = z.object({
+  title: z.string(),
+  summary: z.string().default(""),
+  lessons: z.array(LessonPlan).default([]),
+});
+const QuizItem = z.object({
+  stem: z.string(),
+  options: z.array(z.string()).default([]),
+  answer_index: z.number().int().min(0).default(0),
+  rationale: z.string().default(""),
+});
+const CoursePlanSchema = z.object({
+  description: z.string(),
+  ceu_value: z.number(),
+  learning_objectives: z
+    .array(z.object({ text: z.string(), bloom_verb: z.string().default("Understand") }))
+    .default([]),
+  modules: z.array(ModulePlan).default([]),
+  final_quiz: z
+    .object({
+      title: z.string().default("Final exam"),
+      pass_threshold: z.number().default(80),
+      items: z.array(QuizItem).default([]),
+    })
+    .default({ title: "Final exam", pass_threshold: 80, items: [] }),
+  pre_survey_prompt: z.string().optional().default(""),
+  post_survey_prompt: z.string().optional().default(""),
+});
+export type CoursePlan = z.infer<typeof CoursePlanSchema>;
+export type FactoryBrief = z.infer<typeof FactoryInput>;
 
 function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 60) || `course-${Date.now()}`;
 }
 
-export const generateCourseFromAi = createServerFn({ method: "POST" })
+type AuthedSupabase = {
+  rpc: {
+    (n: "is_super_admin", a: { _user_id: string }): Promise<{ data: boolean | null }>;
+    (n: "has_tenant_role", a: { _tenant_id: string; _user_id: string; _role: "admin" }): Promise<{ data: boolean | null }>;
+  };
+};
+
+async function assertCanAuthor(supabase: unknown, userId: string, tenantId: string) {
+  const sb = supabase as AuthedSupabase;
+  const { data: isSuper } = await sb.rpc("is_super_admin", { _user_id: userId });
+  if (isSuper) return;
+  const { data: isTenantAdmin } = await sb.rpc("has_tenant_role", {
+    _tenant_id: tenantId,
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (!isTenantAdmin) throw new Error("Forbidden: requires admin role on this tenant");
+}
+
+export const draftCourseFromAi = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => FactoryInput.parse(i))
   .handler(async ({ data, context }) => {
-    const { data: isSuper } = await context.supabase.rpc("is_super_admin", { _user_id: context.userId });
-    if (!isSuper) {
-      const { data: isTenantAdmin } = await context.supabase.rpc("has_tenant_role", {
-        _tenant_id: data.tenantId,
-        _user_id: context.userId,
-        _role: "admin",
-      });
-      if (!isTenantAdmin) throw new Error("Forbidden: requires admin role on this tenant");
-    }
+    await assertCanAuthor(context.supabase, context.userId, data.tenantId);
 
     const system =
       "You are an expert instructional designer building IACET-aligned courses. Write measurable Bloom's-taxonomy objectives. Produce realistic module structure for the requested duration. Quiz items should have 4 options with one correct and a short rationale.";
@@ -156,7 +205,7 @@ Duration (contact hours): ${data.durationHours}
 Certification type: ${data.certificationType || "none"}
 Stated objectives: ${data.objectives}
 Desired learner outcomes: ${data.outcomes}
-
+${data.refinementNotes ? `\nAdditional refinement notes from the author: ${data.refinementNotes}\n` : ""}
 Return JSON:
 {
   "description": "1-paragraph course description",
@@ -182,27 +231,44 @@ Return JSON:
   "post_survey_prompt": "string"
 }`;
 
-    const plan = (await aiJson(prompt, system)) as unknown as {
-      description: string;
-      ceu_value: number;
-      learning_objectives: { text: string; bloom_verb: string }[];
-      modules: { title: string; summary: string; lessons: { title: string; kind: string; summary: string; duration_minutes: number }[] }[];
-      final_quiz: { title: string; pass_threshold: number; items: { stem: string; options: string[]; answer_index: number; rationale: string }[] };
-      pre_survey_prompt?: string;
-      post_survey_prompt?: string;
-    };
+    const raw = await aiJson(prompt, system);
+    const plan = CoursePlanSchema.parse(raw);
 
-    const slug = slugify(data.title) + "-" + Math.random().toString(36).slice(2, 6);
+    await context.supabase.from("ai_generations").insert({
+      kind: "course_factory_draft",
+      tenant_id: data.tenantId,
+      user_id: context.userId,
+      model: MODEL,
+      input: J(data),
+      output: J(plan),
+    });
+
+    return { plan };
+  });
+
+const CreateFromPlanInput = z.object({
+  input: FactoryInput,
+  plan: CoursePlanSchema,
+});
+
+export const createCourseFromPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => CreateFromPlanInput.parse(i))
+  .handler(async ({ data, context }) => {
+    const { input, plan } = data;
+    await assertCanAuthor(context.supabase, context.userId, input.tenantId);
+
+    const slug = slugify(input.title) + "-" + Math.random().toString(36).slice(2, 6);
     const { data: course, error: cErr } = await context.supabase
       .from("courses")
       .insert({
-        tenant_id: data.tenantId,
+        tenant_id: input.tenantId,
         slug,
-        title: data.title,
+        title: input.title,
         description: plan.description,
-        audience: data.audience,
-        contact_hours: data.durationHours,
-        ceu_value: plan.ceu_value ?? Math.round((data.durationHours / 10) * 10) / 10,
+        audience: input.audience,
+        contact_hours: input.durationHours,
+        ceu_value: plan.ceu_value ?? Math.round((input.durationHours / 10) * 10) / 10,
         delivery_modes: ["self_paced"],
         language: "en",
         status: "draft",
@@ -225,6 +291,7 @@ Return JSON:
       );
     }
 
+    const validKinds = ["video", "text", "activity", "quiz", "exam", "file", "heygen", "zoom_live", "talentlms"];
     for (let mi = 0; mi < (plan.modules ?? []).length; mi++) {
       const m = plan.modules[mi];
       const { data: mod, error: mErr } = await context.supabase
@@ -234,7 +301,6 @@ Return JSON:
         .single();
       if (mErr) throw new Error(mErr.message);
 
-      const validKinds = ["video", "text", "activity", "quiz", "exam", "file", "heygen", "zoom_live", "talentlms"];
       const lessonsToInsert = (m.lessons ?? []).map((l, li) => ({
         module_id: mod.id,
         title: l.title,
@@ -292,10 +358,10 @@ Return JSON:
     await context.supabase.from("ai_generations").insert({
       kind: "course_factory",
       course_id: course.id,
-      tenant_id: data.tenantId,
+      tenant_id: input.tenantId,
       user_id: context.userId,
       model: MODEL,
-      input: J(data),
+      input: J(input),
       output: J(plan),
     });
 

@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in · Boost LCSW Readiness" }, { name: "description", content: "Sign in to the Boost Strategy Group LCSW readiness tool." }] }),
+  head: () => ({ meta: [{ title: "Sign in · BOOST Learning & Credentialing" }, { name: "description", content: "Sign in to the BOOST Learning & Credentialing Platform." }] }),
   component: AuthPage,
 });
 
@@ -64,8 +64,8 @@ function AuthPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-md bg-primary text-primary-foreground font-display font-semibold">B</div>
-          <h1 className="font-display text-2xl font-semibold">Boost LCSW Readiness</h1>
-          <p className="text-sm text-muted-foreground">Sign in to continue your prep.</p>
+          <h1 className="font-display text-2xl font-semibold">BOOST Learning</h1>
+          <p className="text-sm text-muted-foreground">Sign in to your launchpad.</p>
         </div>
         <Card>
           <CardHeader>

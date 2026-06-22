@@ -9,6 +9,7 @@ import { BoostAgent } from "@/components/boost/BoostAgent";
 import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
 import { Activity } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/modules/pulse")({
   head: () => ({ meta: [{ title: "Boost!Pulse · BoostMyWorkforce" }] }),
@@ -19,6 +20,7 @@ const CADENCES = ["weekly", "biweekly", "monthly", "quarterly"] as const;
 
 function PulseHome() {
   const qc = useQueryClient();
+  const { canManageRoles } = useAuth();
   const getFn = useServerFn(getPulseCadence);
   const setFn = useServerFn(setPulseCadence);
   const cad = useQuery({ queryKey: ["pulse-cadence"], queryFn: () => getFn({ data: {} }) });
@@ -70,10 +72,12 @@ function PulseHome() {
           </Card>
         </div>
 
-        <BoostAgent
-          moduleKey="pulse"
-          intro="Hi — I'm BOOST! I'll help you pick a cadence and draft your first survey. Before launching, you'll get a confirmation email. What pace fits your team?"
-        />
+        {canManageRoles && (
+          <BoostAgent
+            moduleKey="pulse"
+            intro="Hi — I'm BOOST! I'll help you pick a cadence and draft your first survey. Before launching, you'll get a confirmation email. What pace fits your team?"
+          />
+        )}
       </div>
     </div>
   );

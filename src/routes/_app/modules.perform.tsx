@@ -14,6 +14,7 @@ import { BoostAgent } from "@/components/boost/BoostAgent";
 import { ModulePageHeader } from "@/components/boost/ModulePageHeader";
 import { Target, CalendarRange, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_app/modules/perform")({
   head: () => ({ meta: [{ title: "Boost!Perform · BoostMyWorkforce" }] }),
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/_app/modules/perform")({
 });
 
 function PerformHome() {
+  const { canManageRoles } = useAuth();
   const qc = useQueryClient();
   const listCats = useServerFn(listGoalCategories);
   const listCycs = useServerFn(listReviewCycles);
@@ -108,10 +110,12 @@ function PerformHome() {
           </Card>
         </div>
 
-        <BoostAgent
-          moduleKey="perform"
-          intro="Hi — I'm BOOST! I can set up your goal categories and draft a review cycle. Before any cycle goes live, you'll get an email to confirm. Where do you want to start?"
-        />
+        {canManageRoles && (
+          <BoostAgent
+            moduleKey="perform"
+            intro="Hi — I'm BOOST! I can set up your goal categories and draft a review cycle. Before any cycle goes live, you'll get an email to confirm. Where do you want to start?"
+          />
+        )}
       </div>
     </div>
   );

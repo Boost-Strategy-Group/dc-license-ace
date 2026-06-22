@@ -157,15 +157,10 @@ function RolesHome() {
           )}
         </div>
 
-        {canManageRoles ? (
+        {canManageRoles && (
           <BoostAgent
             moduleKey="roles"
             intro="Hi — I'm BOOST! I can draft job descriptions and help you sketch an org chart. What role do you want to start with?"
-          />
-        ) : (
-          <BoostAgent
-            moduleKey="roles"
-            intro="Hi — I'm BOOST! Ask me anything about your role, responsibilities, or how to grow into it."
           />
         )}
       </div>

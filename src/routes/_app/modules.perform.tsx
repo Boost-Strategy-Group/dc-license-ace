@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_app/modules/perform")({
 });
 
 function PerformHome() {
+  const { canManageRoles } = useAuth();
   const qc = useQueryClient();
   const listCats = useServerFn(listGoalCategories);
   const listCycs = useServerFn(listReviewCycles);

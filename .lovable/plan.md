@@ -1,51 +1,33 @@
-## Two fixes
+# Plan: Commit BFRD and Generate PRD
 
-### 1. "Open builder" button doesn't navigate
-On `/admin/courses`, the card uses `<Link><Button>...</Button></Link>`. That nests a `<button>` inside an `<a>`, which is invalid HTML and prevents clicks from triggering navigation in most browsers.
+Create two committed documents in the repo so product context lives alongside code.
 
-**Fix:** make the Button render *as* the Link using `asChild` so a single `<a>` is rendered (no nested button). Same fix applied to the "AI Course Factory" link in the same header. Apply to any other `<Link><Button>` pairs found in admin course/builder pages.
+## 1. `docs/BFRD.md`
+Verbatim copy of the BOOST Learning & Credentialing Platform Business Functional Requirements Document v1.0 from project knowledge (sections 1–29). No edits — this is the source-of-truth business document owned by Jackie / BSG.
 
-### 2. AI Course Factory: review & approve before persisting
+## 2. `docs/PRD.md`
+A true Product Requirements Document derived from the BFRD **and** the current implementation state of the app. Structured as:
 
-**Today:** The form posts to `generateCourseFromAi`, which immediately inserts the course, modules, lessons, learning objectives, final exam, and pre/post surveys, then redirects to the builder. No approval step.
+- **Overview** — product vision, target users (BSG, tenant admins, learners, apprentices, state-training participants, BSG super admins).
+- **Problem & Goals** — what BOOST solves, success metrics from BFRD §28.
+- **Personas & Roles** — super_admin, tenant_admin, learner, mentor, instructor (mapped to current `user_roles` enum).
+- **Scope — Modules**
+  - Boost!Roles (job descriptions, org chart) — *implemented*
+  - Boost!Perform (goals, approvals) — *implemented*
+  - Boost!Pulse (cadences, check-ins) — *implemented*
+  - Boost!Learn (catalog, AI Course Factory, publications) — *implemented, AI Factory has draft/review step*
+  - Apprenticeship / RTI — *implemented, GoSprout CSV export*
+  - State Training vertical — *implemented*
+  - BOOST! Implementation Agent — *implemented (Roles/Perform/Pulse only)*
+- **Out of Scope (v1)** — Learn/Apprenticeship for the AI agent; public client logos; full GoSprout data sync (SSO launchpad only); HeyGen avatars; multilingual ES; Stripe billing; Zoom/StreamYard live delivery; Certifier integration.
+- **Functional Requirements** — per module, with current state vs. planned.
+- **Non-Functional Requirements** — multi-tenant isolation (RLS), email infra on notify.boostmyworkforce.com, approval audit trail, accessibility.
+- **Integrations** — Lovable Cloud (Supabase), Lovable AI Gateway, BBS (stub), GoSprout (SSO launchpad), TalentLMS (stub). Deferred: HeyGen, Stripe, GHL, Zoom, Certifier.
+- **Milestones** — Phases 1–8 with status (1–8 complete) and follow-on phases (billing, HeyGen, ES localization, BBS deep link).
+- **Acceptance Criteria** — sample per module.
+- **Open Questions** — pricing model, ES launch timing, HeyGen budget, BBS API readiness.
 
-**Change to a two-step flow:**
-
-1. **Step 1 — Draft the plan.** Split the server function into:
-   - `draftCourseFromAi(input)` — calls Gemini, returns the structured plan JSON (description, CEU, learning objectives, modules + lessons, final quiz, pre/post survey prompts). Writes **nothing** to the database except an `ai_generations` row for audit.
-   - `createCourseFromPlan({ input, plan })` — accepts the (possibly edited) plan and performs all the inserts that `generateCourseFromAi` does today. Returns `{ courseId, slug }`.
-
-2. **Step 2 — Review screen on `/admin/ai-factory`:**
-   - After "Generate course draft", show a review panel instead of redirecting:
-     - Course description (editable textarea)
-     - CEU value (editable)
-     - Learning objectives (editable list)
-     - Modules → lessons outline (collapsible; each title/summary/kind editable; lessons can be deleted)
-     - Final exam items (stem + options + correct + rationale; editable)
-     - Pre / Post survey prompts (editable)
-   - Three actions:
-     - **Regenerate** — re-call `draftCourseFromAi` with the original brief (or an optional "refinement notes" field)
-     - **Approve & create course** — call `createCourseFromPlan` with the edited plan, then redirect to `/admin/courses/$courseId`
-     - **Cancel** — clears the draft, returns to the brief form
-
-3. **State handling:** keep the draft in component state only (not persisted) until the user approves; matches the project rule that go-lives require explicit approval.
-
-### Verification (after build mode)
-
-Drive Playwright as `admin@boost.test`:
-- Click an existing course card → confirm the builder opens (URL changes, builder UI renders)
-- AI Factory: submit brief → review screen appears, no `courses` row written yet
-- Edit a module title in the review → click Approve → `courses` row + correct modules/lessons exist; redirect to builder lands on the new course
-- Click Cancel from review → no rows created
-- Run `psql` cleanup to delete the QA test course
-
-### Files touched
-- `src/lib/ai-factory.functions.ts` — split into `draftCourseFromAi` + `createCourseFromPlan`; keep `generateCourseFromAi` as a thin wrapper for backward compat or remove it (only caller is the factory page)
-- `src/routes/_app/admin.ai-factory.tsx` — add review/approve UI and state machine
-- `src/routes/_app/admin.courses.tsx` — `asChild` fix on Link + Button
-- (audit) other admin course pages for the same `<Link><Button>` pattern
-
-### Out of scope
-- Needs assessment flow (already has its own page; not changing)
-- AI work product generation
-- New AI features beyond review/approval
+## Notes
+- No code or schema changes.
+- Both files go in `docs/` (creating the folder).
+- After approval I'll write the two files in one batch.

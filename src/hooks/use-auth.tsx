@@ -9,7 +9,10 @@ type AuthCtx = {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  isBsgAdmin: boolean;
   isTenantAdmin: boolean;
+  isManager: boolean;
   roles: string[];
   canManageRoles: boolean;
   canManageStudents: boolean;
@@ -21,7 +24,10 @@ const Ctx = createContext<AuthCtx>({
   session: null,
   loading: true,
   isAdmin: false,
+  isSuperAdmin: false,
+  isBsgAdmin: false,
   isTenantAdmin: false,
+  isManager: false,
   roles: [],
   canManageRoles: false,
   canManageStudents: false,
@@ -32,13 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<string[]>([]);
-  const isAdmin = roles.some((r) => r === "admin" || r === "super_admin");
+  // Role hierarchy: super_admin > bsg_admin > tenant_admin > manager > learner
+  const isSuperAdmin = roles.some((r) => r === "super_admin");
+  const isBsgAdmin = roles.some((r) => r === "bsg_admin");
   const isTenantAdmin = roles.some((r) => r === "tenant_admin");
+  const isManager = roles.some((r) => r === "manager");
+  // isAdmin: platform-level admin (super_admin or bsg_admin — cross-tenant)
+  const isAdmin = isSuperAdmin || isBsgAdmin;
   const canManageRoles = roles.some((r) =>
-    ["admin", "super_admin", "tenant_admin", "instructor"].includes(r),
+    ["super_admin", "bsg_admin", "tenant_admin", "instructor"].includes(r),
   );
   const canManageStudents = roles.some((r) =>
-    ["admin", "super_admin", "tenant_admin"].includes(r),
+    ["super_admin", "bsg_admin", "tenant_admin", "manager"].includes(r),
   );
   const router = useRouter();
   const qc = useQueryClient();
@@ -79,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ user: session?.user ?? null, session, loading, isAdmin, isTenantAdmin, roles, canManageRoles, canManageStudents, signOut }}>
+    <Ctx.Provider value={{ user: session?.user ?? null, session, loading, isAdmin, isSuperAdmin, isBsgAdmin, isTenantAdmin, isManager, roles, canManageRoles, canManageStudents, signOut }}>
       {children}
     </Ctx.Provider>
   );

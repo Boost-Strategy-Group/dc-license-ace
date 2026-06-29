@@ -7,7 +7,8 @@ export const Route = createFileRoute("/_app/admin")({
 });
 
 function AdminLayout() {
-  const { isAdmin, loading } = useAuth();
+  // isAdmin = super_admin OR bsg_admin (both cross-tenant platform roles)
+  const { isAdmin, isSuperAdmin, isBsgAdmin, loading } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     if (!loading && !isAdmin) navigate({ to: "/dashboard", replace: true });
